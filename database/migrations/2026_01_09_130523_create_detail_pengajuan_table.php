@@ -16,11 +16,8 @@ return new class extends Migration
             $table->foreignUuid('pengajuan_id')->constrained('pengajuan')->onDelete('cascade');
             $table->enum('pilihan_judul', ['1', '2', '3']);
             $table->string('judul');
-            $table->text('deskripsi_singkat');
+            $table->text('latar_belakang'); 
             $table->foreignUuid('topik_id')->constrained('topik_penelitian');
-            $table->string('file_review_jurnal_1');
-            $table->string('file_review_jurnal_2');
-            $table->string('file_review_jurnal_3');
             $table->timestamps();
         });
     }

@@ -15,11 +15,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa');
             $table->foreignUuid('gelombang_id')->constrained('gelombang');
-            $table->integer('indeks_judul_acc')->nullable();
 
-            // Relasi ke Dosen (Pembimbing 1 & 2)
+            $table->enum('harapan_judul', ['1', '2', '3']);
+            $table->text('alasan_prioritas');
+            $table->integer('indeks_judul_acc')->nullable();
             $table->foreignUuid('dosen_pembimbing_1_id')->nullable()->constrained('dosen');
             $table->foreignUuid('dosen_pembimbing_2_id')->nullable()->constrained('dosen');
+
             $table->enum('status_pengajuan', ['pending', 'approved', 'fixing', 'published'])->default('pending');
             $table->text('catatan_admin')->nullable();
             $table->dateTime('tgl_plotting')->nullable();
