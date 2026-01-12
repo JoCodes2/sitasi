@@ -44,6 +44,12 @@
                 <div>Pengguna</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('/gelombang') ? 'active' : '' }}">
+            <a href="/gelombang" class="menu-link">
+                <i class="menu-icon fa-solid fa-calendar-check"></i>
+                <div>Gelombang Pengajuan</div>
+            </a>
+        </li>
 
 
     </ul>
