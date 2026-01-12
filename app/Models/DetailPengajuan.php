@@ -18,11 +18,8 @@ class DetailPengajuan extends Model
         'pengajuan_id',
         'pilihan_judul',
         'judul',
-        'deskripsi_singkat',
+        'latar_belakang',
         'topik_id',
-        'file_review_jurnal_1',
-        'file_review_jurnal_2',
-        'file_review_jurnal_3',
         'created_at',
         'updated_at'
     ];

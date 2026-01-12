@@ -18,6 +18,8 @@ class Pengajuan extends Model
         'id',
         'mahasiswa_id',
         'gelombang_id',
+        'harapan_judul',
+        'alasan_prioritas',
         'indeks_judul_acc',
         'dosen_pembimbing_1_id',
         'dosen_pembimbing_2_id',
