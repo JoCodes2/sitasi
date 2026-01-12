@@ -23,14 +23,7 @@
 
         <x-base-table :headers="$headers" id="gelombangTable">
             <tbody id="gelombangBody">
-                <tr>
-                    <td colspan="8" class="text-center py-5">
-                        <div class="d-flex flex-column align-items-center">
-                            <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Belum ada data gelombang. Klik <strong>Tambah Gelombang</strong> untuk memulai.</p>
-                        </div>
-                    </td>
-                </tr>
+
             </tbody>
         </x-base-table>
     </x-base-body>
@@ -44,7 +37,7 @@
 >
     <form id="formGelombang">
         @csrf
-        <input type="hidden" name="id" id="gelombang_id">
+        <input type="hidden" name="id" id="id">
 
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -90,5 +83,5 @@
 </x-base-modal>
 @endsection
 @section('scripts')
-
+<script type="module" src="{{ asset('controllers/gelombang.controller.js') }}"></script>
 @endsection

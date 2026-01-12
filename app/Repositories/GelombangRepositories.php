@@ -33,6 +33,7 @@ class GelombangRepositories implements GelombangInterfaces
             $data->gelombang_ke = $request->input('gelombang_ke');
             $data->tgl_mulai = $request->input('tgl_mulai');
             $data->tgl_selesai = $request->input('tgl_selesai');
+            $data->is_aktif = $request->input('is_aktif');
             $data->save();
             return $this->success($data);
         } catch (\Throwable $th) {
@@ -62,6 +63,7 @@ class GelombangRepositories implements GelombangInterfaces
             $data->gelombang_ke = $request->input('gelombang_ke');
             $data->tgl_mulai = $request->input('tgl_mulai');
             $data->tgl_selesai = $request->input('tgl_selesai');
+            $data->is_aktif = $request->input('is_aktif');
             $data->save();
             return $this->success($data);
         } catch (\Throwable $th) {
