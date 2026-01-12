@@ -8,6 +8,11 @@ Route::get('/user', function () {
     return view('admin.user');
 });
 
+// route web
+Route::get('/gelombang', function () {
+    return view('pages.gelombang');
+});
+
 
 // route api
 Route::prefix('sitasi')->group(function () {
