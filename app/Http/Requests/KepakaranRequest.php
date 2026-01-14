@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TopikPenelitianRequest extends FormRequest
+class KepakaranRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,19 +21,32 @@ class TopikPenelitianRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
         return [
-            'nama_topik' => 'required|string|max:255',
+            'dosen_id' => 'required|uuid|exists:dosen,id',
+            'topik_id' => 'required|uuid|exists:topik_penelitian,id',
+            'persentase' => 'required|integer|min:0|max:100',
         ];
     }
+
 
     public function messages(): array
     {
         return [
-            'nama_topik.required' => 'Nama topik tidak boleh kosong.',
-            'nama_topik.string'   => 'Nama topik harus berupa data teks.',
-            'nama_topik.max'      => 'Nama topik tidak boleh lebih dari 255 karakter.',
+            'dosen_id.required' => 'Dosen wajib dipilih.',
+            'dosen_id.uuid' => 'Format ID dosen tidak valid.',
+            'dosen_id.exists' => 'Dosen tidak ditemukan.',
+
+            'topik_id.required' => 'Topik penelitian wajib dipilih.',
+            'topik_id.uuid' => 'Format ID topik penelitian tidak valid.',
+            'topik_id.exists' => 'Topik penelitian tidak ditemukan.',
+
+            'persentase.required' => 'Persentase wajib diisi.',
+            'persentase.integer' => 'Persentase harus berupa angka.',
+            'persentase.min' => 'Persentase minimal 0.',
+            'persentase.max' => 'Persentase maksimal 100.',
         ];
     }
 
