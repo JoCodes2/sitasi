@@ -22,26 +22,29 @@
 
     <ul class="menu-inner py-1">
 
-        <!-- ==================== PENGATURAN AKUN ==================== -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Analisis</span>
-        </li>
-
-
         <li class="menu-item {{ request()->is('/user') ? 'active' : '' }}">
             <a href="/user" class="menu-link">
                 <i class="menu-icon fa-solid fa-user-doctor"></i>
                 <div>Pengguna</div>
             </a>
         </li>
-
-
+        <!-- ==================== PENGATURAN AKUN ==================== -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Utama</span>
+        </li>
 
         <!-- ==================== DATA MASTER ==================== -->
-        <li class="menu-item {{ request()->is('/user') ? 'active' : '' }}">
-            <a href="/user" class="menu-link">
-                <i class="menu-icon fa-solid fa-user-doctor"></i>
-                <div>Pengguna</div>
+        <li class="menu-item {{ request()->is('/dosen') ? 'active' : '' }}">
+            <a href="/dosen" class="menu-link">
+                <i class="menu-icon fa-solid fa-user-graduate"></i>
+                <div>Dosen</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ request()->is('/kepakaran') ? 'active' : '' }}">
+            <a href="/kepakaran" class="menu-link">
+                <i class="menu-icon fa-solid fa-award"></i>
+                <div>Kepakaran</div>
             </a>
         </li>
         <li class="menu-item {{ request()->is('gelombang') ? 'active' : '' }}">

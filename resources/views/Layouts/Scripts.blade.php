@@ -24,7 +24,11 @@
  <script async defer src="https://buttons.github.io/buttons.js"></script>
  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+ {{-- Helper JS --}}
+ <script src="{{ asset('helper/helper.js') }}"></script>
 
  {{-- Summernote CSS --}}
  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">

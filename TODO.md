@@ -1,0 +1,5 @@
+-   [x] Tambahkan fungsi JavaScript untuk memuat opsi dosen ke dalam select dosen_id
+-   [x] Tambahkan fungsi JavaScript untuk memuat opsi topik ke dalam select topik_id
+-   [x] Panggil fungsi loadDosen dan loadTopik saat modal ditampilkan untuk create
+-   [x] Perbaiki fungsi edit-btn untuk mengisi form dengan data yang ada dan memuat opsi select
+-   [x] Pastikan modal menampilkan nama dosen dan topik saat create dan update
