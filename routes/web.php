@@ -9,6 +9,14 @@ Route::get('/user', function () {
     return view('admin.user');
 });
 
+
+// route registrasi and login
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+Route::get('/registrasi', function () {
+    return view('auth.registrasi');
+})->name('registrasi');
 // route web
 Route::get('/gelombang', function () {
     return view('pages.gelombang');
