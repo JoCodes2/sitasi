@@ -34,15 +34,15 @@
         </li>
 
         <!-- ==================== DATA MASTER ==================== -->
-        <li class="menu-item {{ request()->is('/dosen') ? 'active' : '' }}">
+        <li class="menu-item {{ request()->is('dosen') ? 'active' : '' }}">
             <a href="/dosen" class="menu-link">
                 <i class="menu-icon fa-solid fa-user-graduate"></i>
                 <div>Dosen</div>
             </a>
         </li>
 
-        <li class="menu-item {{ request()->is('/kepakaran') ? 'active' : '' }}">
-            <a href="/kepakaran" class="menu-link">
+        <li class="menu-item {{ request()->is('kepakaran') ? 'active' : '' }}">
+            <a href="kepakaran" class="menu-link">
                 <i class="menu-icon fa-solid fa-award"></i>
                 <div>Kepakaran</div>
             </a>
