@@ -34,23 +34,29 @@
         </li>
 
         <!-- ==================== DATA MASTER ==================== -->
-        <li class="menu-item {{ request()->is('/dosen') ? 'active' : '' }}">
+        <li class="menu-item {{ request()->is('dosen') ? 'active' : '' }}">
             <a href="/dosen" class="menu-link">
                 <i class="menu-icon fa-solid fa-user-graduate"></i>
                 <div>Dosen</div>
             </a>
         </li>
 
-        <li class="menu-item {{ request()->is('/kepakaran') ? 'active' : '' }}">
-            <a href="/kepakaran" class="menu-link">
+        <li class="menu-item {{ request()->is('kepakaran') ? 'active' : '' }}">
+            <a href="kepakaran" class="menu-link">
                 <i class="menu-icon fa-solid fa-award"></i>
                 <div>Kepakaran</div>
             </a>
         </li>
-        <li class="menu-item {{ request()->is('/gelombang') ? 'active' : '' }}">
+        <li class="menu-item {{ request()->is('gelombang') ? 'active' : '' }}">
             <a href="/gelombang" class="menu-link">
                 <i class="menu-icon fa-solid fa-calendar-check"></i>
                 <div>Gelombang Pengajuan</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->is('mahasiswa') ? 'active' : '' }}">
+            <a href="/mahasiswa" class="menu-link">
+                <i class="menu-icon fa-solid fa-user-graduate"></i>
+                <div>Data Mahasiswa</div>
             </a>
         </li>
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->enum('agama', ['islam', 'hindu', 'kristen', 'budha', 'konghucu']);
             $table->text('alamat');
             $table->string('no_hp');
             $table->enum('prodi', ['TI', 'SI']);
