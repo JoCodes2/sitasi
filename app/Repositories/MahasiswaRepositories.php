@@ -33,7 +33,7 @@ class MahasiswaRepositories implements MahasiswaInterfaces
         DB::beginTransaction();
         try {
             $user = $this->userModel->create([
-                'name'     => $request->nama,
+                'nama'     => $request->nama,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
                 'role'     => 'mahasiswa',
@@ -49,6 +49,7 @@ class MahasiswaRepositories implements MahasiswaInterfaces
                 'alamat'        => $request->alamat,
                 'prodi'         => $request->prodi,
                 'angkatan'      => $request->angkatan,
+                'no_hp'      => $request->no_hp,
             ]);
 
             DB::commit();

@@ -48,6 +48,13 @@ class MahasiswaRequest extends FormRequest
             'angkatan' => 'required',
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'email.unique' => 'Email sudah digunakan',
+            'nim.unique'   => 'NIM sudah terdaftar',
+        ];
+    }
 
     protected function failedValidation(Validator $validator)
     {

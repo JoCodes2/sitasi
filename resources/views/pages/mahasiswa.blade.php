@@ -77,7 +77,7 @@
                     <label class="text-muted small d-block">Angkatan</label>
                     <p id="det_angkatan" class="fw-bold border-bottom pb-1">-</p>
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <label class="text-muted small d-block">Alamat Lengkap</label>
                     <p id="det_alamat" class="fw-bold border-bottom pb-1">-</p>
                 </div>

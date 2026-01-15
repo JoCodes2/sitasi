@@ -133,6 +133,6 @@
 </div>
 
 @include('Layouts.Scripts')
-<script type="module" src="{{ asset('controllers/mahasiswa.controller.js') }}"></script>
+
 </body>
 </html>

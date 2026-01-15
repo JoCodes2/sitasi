@@ -89,54 +89,43 @@ class mahasiswaService {
         </tr>
     `);
     }
-    async upsertData(formElement, checkingEdit) {
-        const submitButton = $('#btnSimpanGelombang');
+    // Di dalam mahasiswa.service.js
+    async registrasiMahasiswa(formElement) {
+        const submitButton = $('#btnDaftar');
         const originalText = submitButton.html();
 
         try {
             const formData = new FormData(formElement);
+            submitButton.attr('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Memproses...');
 
-            if (!$('#is_aktif').is(':checked')) {
-                formData.set('is_aktif', 0);
+            const responseData = await this.ajaxRequest(`${appUrl}/sitasi/mahasiswa/create`, 'POST', formData);
+            console.log(responseData);
+
+            if (responseData.code === 200) {
+                successAlert().then(() => {
+                    window.location.href = `${appUrl}/login`;
+                });
             }
-
-            submitButton.attr('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Loading...');
-
-            let responseData;
-            if (checkingEdit()) {
-                const id = $('#id').val();
-                responseData = await this.ajaxRequest(`${appUrl}/sitasi/gelombang/update/${id}`, 'POST', formData);
-            } else {
-                responseData = await this.ajaxRequest(`${appUrl}/sitasi/gelombang/create`, 'POST', formData);
-            }
-
-            successAlert().then(() => {
-                $('#modalTambahGelombang').modal('hide');
-                realoadBrowser();
-                submitButton.attr('disabled', false).html(originalText);
-            });
 
         } catch (error) {
             submitButton.attr('disabled', false).html(originalText);
 
-            if (error.status === 422 || error.response?.status === 422) {
-                warningAlert();
-                const errors = error.responseJSON?.data ?? error.response?.data;
-                const validator = $('#formGelombang').validate();
+            if (error.status === 422) {
+                warningAlert("Mohon periksa kembali inputan Anda.");
+                const errors = error.responseJSON?.data ?? error.responseJSON?.errors;
+                const validator = $('#formRegistrasi').validate();
 
                 const errorList = {};
                 $.each(errors, function (field, messages) {
+                    $(`[name="${field}"]`).addClass('is-invalid');
                     errorList[field] = messages[0];
                 });
                 validator.showErrors(errorList);
-                return;
+            } else {
+                errorAlert("Terjadi kesalahan sistem.");
             }
-
-            console.error("Detail Error:", error);
-            errorAlert();
         }
     }
-
 
 
     async getDataById(id) {

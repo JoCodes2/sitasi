@@ -95,7 +95,7 @@
                 </div>
 
                 <div class="card-body px-4 px-md-5 pb-5">
-                    <form id="formRegistrasi">
+                    <form id="formRegistrasi" method="POST">
                         @csrf
 
                         <div class="section-title">
@@ -141,6 +141,10 @@
                                 <input type="text" name="nim" id="nim" class="form-control" placeholder="Nomor Induk Mahasiswa">
                             </div>
                             <div class="col-md-4">
+                                <label class="form-label">No HP</label>
+                                <input type="text" name="no_hp" id="no_hp" class="form-control" placeholder="Nomor Nomor Hp Anda">
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label">Program Studi</label>
                                 <select name="prodi" id="prodi" class="form-select">
                                     <option value="" selected disabled>Pilih Prodi</option>
@@ -152,7 +156,16 @@
                                 <label class="form-label">Angkatan</label>
                                 <input type="number" name="angkatan" id="angkatan" class="form-control" placeholder="2024">
                             </div>
+
                             <div class="col-md-4">
+                                <label class="form-label">Tempat Lahir</label>
+                                <input type="text" name="tempat_lahir" id="tempat_lahir" class="form-control" placeholder="Contoh: Palu">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Lahir</label>
+                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control">
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label">Agama</label>
                                 <select name="agama" id="agama" class="form-select">
                                     <option value="" selected disabled>Pilih Agama</option>
@@ -163,24 +176,16 @@
                                     <option value="konghucu">Khonghucu</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                             <div class="col-md-6">
                                 <label class="form-label">Jenis Kelamin</label>
-                                <div class="d-flex mt-2">
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input" type="radio" name="jenis_kelamin" value="L" id="laki">
-                                        <label class="form-check-label small fw-bold" for="laki">Laki-laki</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="jenis_kelamin" value="P" id="perempuan">
-                                        <label class="form-check-label small fw-bold" for="perempuan">Perempuan</label>
-                                    </div>
-                                </div>
+                                <select name="jenis_kelamin" id="jenis_kelamin" class="form-select">
+                                    <option value="" selected disabled>Pilih jenis kelamin</option>
+                                    <option value="L">Laki-Laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control">
-                            </div>
-                            <div class="col-12">
+
+                            <div class="col-md-12">
                                 <label class="form-label">Alamat Domisili</label>
                                 <textarea name="alamat" class="form-control" id="alamat" rows="2" placeholder="Alamat lengkap saat ini..."></textarea>
                             </div>
@@ -210,5 +215,6 @@
 </div>
 
 @include('Layouts.Scripts')
+<script type="module" src="{{ asset('controllers/mahasiswa.controller.js') }}"></script>
 </body>
 </html>
