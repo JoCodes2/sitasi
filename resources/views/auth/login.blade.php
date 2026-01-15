@@ -70,6 +70,27 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(105, 108, 255, 0.4);
         }
+        /* Membuat seluruh input group berwarna merah saat error */
+        .input-group.invalid-group {
+            border: 1px solid #ff3e1d; /* Warna danger bootstrap */
+            border-radius: 0.375rem;
+        }
+
+        .input-group.invalid-group .input-group-text {
+            border-color: transparent;
+        }
+
+        .input-group.invalid-group input {
+            border-color: transparent;
+        }
+
+        /* Memperbaiki posisi pesan error agar tidak terlalu menempel */
+        .invalid-feedback {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
     </style>
     <script>let appUrl = '{{ env('APP_URL') }}';</script>
 </head>
@@ -86,7 +107,7 @@
                 </div>
 
                 <div class="card-body px-4 pb-4">
-                    <form id="formLogin">
+                    <form id="loginForm" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Email</label>
@@ -101,7 +122,7 @@
                             <div class="input-group input-group-merge form-password-toggle">
                                 <span class="input-group-text"><i class="bx bx-lock-alt"></i></span>
                                 <input type="password" name="password" class="form-control" placeholder="········" required>
-                                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                <span class="input-group-text form-password-toggle cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
                         </div>
 
@@ -133,6 +154,6 @@
 </div>
 
 @include('Layouts.Scripts')
-
+<script type="module" src="{{ asset('controllers/login.controller.js') }}"></script>
 </body>
 </html>
