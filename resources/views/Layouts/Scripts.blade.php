@@ -60,7 +60,7 @@
 
 
  <script>
-     const urlLogout = 'auth/logout'
+     const urlLogout = `${appUrl}/sitasi/logout`
      $(document).ready(function() {
          $('#btnLogout').click(function(e) {
              Swal.fire({
@@ -73,7 +73,7 @@
                  if (result.isConfirmed) {
                      e.preventDefault();
                      $.ajax({
-                         url: `{{ url('/logout') }}`,
+                         url: urlLogout,
                          method: 'POST',
                          dataType: 'json',
                          headers: {
