@@ -13,6 +13,9 @@ Route::get('/user', function () {
 Route::get('/gelombang', function () {
     return view('pages.gelombang');
 });
+Route::get('/mahasiswa', function () {
+    return view('pages.mahasiswa');
+});
 
 
 // route api
