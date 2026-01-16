@@ -20,6 +20,29 @@ function confirmDeleteAlert(message) {
         }
     });
 }
+function confirmAlert(message, callback) {
+    Swal.fire({
+        title: '<span style="font-size: 22px"> Konfirmasi</span>',
+        text: message, // Gunakan pesan dari parameter
+        showCancelButton: true,
+        showConfirmButton: true,
+        cancelButtonText: 'Tidak',
+        confirmButtonText: 'Ya',
+        reverseButtons: true,
+        confirmButtonColor: '#48ABF7',
+        cancelButtonColor: '#EFEFEF',
+        customClass: {
+            cancelButton: 'text-dark'
+        }
+    }).then((result) => {
+        // Cek jika tombol confirm (Ya) diklik
+        if (result.isConfirmed) {
+            if (typeof callback === "function") {
+                callback(); // Jalankan fungsi hapus di sini
+            }
+        }
+    });
+}
 
 
 
@@ -83,3 +106,16 @@ function exportAlert(message) {
         }
     });
 }
+const loadingAllert = (title = 'Mohon Tunggu', text = 'Sedang memproses data...') => {
+    return Swal.fire({
+        title: title,
+        text: text,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+};
