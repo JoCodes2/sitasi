@@ -1,15 +1,18 @@
 @extends('Layouts.Base')
 @section('content')
     <div class="card">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h3 class="m-0 font-weight-bold"><i class="fa-solid fa-book pr-2"></i> Topik</h3>
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h3 class="m-0 font-weight-bold">
+                <i class="fa-solid fa-lightbulb pr-2"></i> Topik
+            </h3>
+
+            <button type="button" class="btn btn-primary btn-sm" id="btnTambah">
+                <i class="fa fa-plus"></i> Tambah
+            </button>
         </div>
 
         <div class="card-body py-2">
             <div class="py-3">
-                <button type="button" class="btn btn-primary mb-3" id="btnTambah">
-                    <i class="fa fa-plus"></i> Tambah
-                </button>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
