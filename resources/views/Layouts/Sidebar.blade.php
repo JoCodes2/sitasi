@@ -39,6 +39,12 @@
                 <div>Dosen</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('topik') ? 'active' : '' }}">
+            <a href="/topik" class="menu-link">
+                <i class="menu-icon fa-solid fa-lightbulb"></i>
+                <div>Topik</div>
+            </a>
+        </li>
 
         <li class="menu-item {{ request()->is('kepakaran') ? 'active' : '' }}">
             <a href="kepakaran" class="menu-link">

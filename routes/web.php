@@ -43,6 +43,9 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/kepakaran', function () {
         return view('admin.kepakaran');
     });
+    Route::get('/topik', function () {
+        return view('admin.topik');
+    });
 
     // route api
     Route::prefix('sitasi')->group(function () {

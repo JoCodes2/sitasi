@@ -37,7 +37,6 @@ class TopikPenelitianRequest extends FormRequest
         ];
     }
 
-
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
