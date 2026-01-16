@@ -5,6 +5,7 @@ use App\Http\Controllers\CMS\DosenController;
 use App\Http\Controllers\CMS\KepakaranController;
 use App\Http\Controllers\CMS\GelombangController;
 use App\Http\Controllers\CMS\MahasiswaController;
+use App\Http\Controllers\CMS\PengajuanController;
 use App\Http\Controllers\CMS\TopikPenelitianController;
 use Illuminate\Support\Facades\Route;
 
@@ -81,6 +82,13 @@ Route::middleware(['auth', 'web'])->group(function () {
         });
         Route::prefix('mahasiswa')->controller(MahasiswaController::class)->group(function () {
             Route::get('/', 'getAllData');
+            Route::get('/get/{id}', 'getDataById');
+            Route::post('/update/{id}', 'updateData');
+            Route::delete('/delete/{id}', 'deleteData');
+        });
+        Route::prefix('pengajuan')->controller(PengajuanController::class)->group(function () {
+            Route::get('/', 'getAllData');
+            Route::post('/create', 'createData');
             Route::get('/get/{id}', 'getDataById');
             Route::post('/update/{id}', 'updateData');
             Route::delete('/delete/{id}', 'deleteData');
