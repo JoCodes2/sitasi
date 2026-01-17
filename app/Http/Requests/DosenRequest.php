@@ -32,7 +32,7 @@ class DosenRequest extends FormRequest
                 : 'required|string|max:20|unique:dosen,nidn',
             'nama_lengkap' => 'required|string|max:255',
             'gelar' => 'required|string|max:100',
-            'jabatan_fungsional' => 'required|string|max:100',
+            'jabatan_fungsional' => 'nullable|string|max:100',
             'jabatan_struktural' => 'nullable|string|max:100',
             'kuota_max' => 'required|integer|min:1|max:100',
             'no_hp' => 'required|string|max:20',
@@ -56,7 +56,6 @@ class DosenRequest extends FormRequest
             'gelar.required' => 'Gelar wajib diisi.',
             'gelar.max' => 'Gelar maksimal 100 karakter.',
 
-            'jabatan_fungsional.required' => 'Jabatan fungsional wajib diisi.',
             'jabatan_fungsional.max' => 'Jabatan fungsional maksimal 100 karakter.',
 
             'jabatan_struktural.max' => 'Jabatan struktural maksimal 100 karakter.',

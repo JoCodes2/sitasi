@@ -33,6 +33,14 @@
                 <div>Dashboard</div>
             </a>
         </li>
+
+        <li class="menu-item {{ request()->is('user') ? 'active' : '' }}">
+            <a href="/user" class="menu-link">
+                <i class="menu-icon fa-solid fa-user"></i>
+                <div>Pengguna</div>
+            </a>
+        </li>
+
         <li class="menu-item {{ request()->is('dosen') ? 'active' : '' }}">
             <a href="/dosen" class="menu-link">
                 <i class="menu-icon fa-solid fa-user-graduate"></i>
