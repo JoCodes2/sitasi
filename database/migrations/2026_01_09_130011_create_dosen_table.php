@@ -16,7 +16,7 @@ return new class extends Migration
             $table->char('nidn', 20)->unique();
             $table->string('nama_lengkap');
             $table->string('gelar');
-            $table->string('jabatan_fungsional');
+            $table->string('jabatan_fungsional')->nullable();
             $table->string('jabatan_struktural')->nullable();
             $table->integer('kuota_max')->default(5);
             $table->string('no_hp');

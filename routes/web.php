@@ -7,6 +7,7 @@ use App\Http\Controllers\CMS\GelombangController;
 use App\Http\Controllers\CMS\MahasiswaController;
 use App\Http\Controllers\CMS\PengajuanController;
 use App\Http\Controllers\CMS\TopikPenelitianController;
+use App\Http\Controllers\CMS\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function () {
@@ -30,6 +31,10 @@ Route::middleware(['auth', 'web'])->group(function () {
         return view('admin.dashboard');
     });
 
+    Route::get('/user', function () {
+        return view('admin.user');
+    });
+
     Route::get('/gelombang', function () {
         return view('pages.gelombang');
     });
@@ -49,6 +54,14 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     // route api
     Route::prefix('sitasi')->group(function () {
+        Route::prefix('user')->controller(UserController::class)->group(function () {
+            Route::get('/', 'getAllData');
+            Route::post('/create', 'createData');
+            Route::get('/get/{id}', 'getDataById');
+            Route::post('/update/{id}', 'updateData');
+            Route::delete('/delete/{id}', 'deleteData');
+        });
+
         Route::prefix('topik')->controller(TopikPenelitianController::class)->group(function () {
             Route::get('/', 'getAllData');
             Route::post('/create', 'createData');
