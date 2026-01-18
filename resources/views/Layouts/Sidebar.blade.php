@@ -58,6 +58,18 @@
                 <div>Data Mahasiswa</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('pengajuan*') ? 'active' : '' }}">
+            <a href="/pengajuan" class="menu-link">
+                <i class="menu-icon fa-solid fa-file-circle-plus"></i>
+                <div>Pengajuan Judul</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->is('judul*') ? 'active' : '' }}">
+            <a href="/judul" class="menu-link">
+                <i class="menu-icon fa-solid fa-file-circle-plus"></i>
+                <div>Judul Mahasiswa</div>
+            </a>
+        </li>
 
 
     </ul>

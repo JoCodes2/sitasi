@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignUuid('pengajuan_id')->constrained('pengajuan')->onDelete('cascade');
             $table->enum('pilihan_judul', ['1', '2', '3']);
             $table->string('judul');
-            $table->text('latar_belakang'); 
+            $table->text('latar_belakang');
             $table->foreignUuid('topik_id')->constrained('topik_penelitian');
+            $table->enum('status_judul', ['pending', 'approved', 'rejected', 'confirmation'])->default('pending');
             $table->timestamps();
         });
     }

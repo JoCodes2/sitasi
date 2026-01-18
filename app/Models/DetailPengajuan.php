@@ -20,6 +20,7 @@ class DetailPengajuan extends Model
         'judul',
         'latar_belakang',
         'topik_id',
+        'status_judul',
         'created_at',
         'updated_at'
     ];

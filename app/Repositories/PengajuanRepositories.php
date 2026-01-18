@@ -7,6 +7,7 @@ use App\Interfaces\PengajuanInterfaces;
 use App\Models\DetailPengajuan;
 use App\Models\Pengajuan;
 use App\Traits\HttpResponseTraits;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -27,11 +28,11 @@ class PengajuanRepositories implements PengajuanInterfaces
     public function getAllData()
     {
         $user = Auth::user();
-        $query = $this->pengajuanModel->with(['mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
+        $query = $this->pengajuanModel->with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
 
 
-        if ($user->role === 'mahasiswa') {
-            $query->where('mahasiswa_id', $user->mahasiswa_id);
+        if ($user->role == 'mahasiswa') {
+            $query->where('user_id', $user->id);
         }
 
         $data = $query->latest()->get();
@@ -48,11 +49,10 @@ class PengajuanRepositories implements PengajuanInterfaces
         DB::beginTransaction();
         try {
             $data = $this->pengajuanModel->create([
-                'mahasiswa_id'     => Auth::user()->mahasiswa_id,
+                'user_id'     => Auth::user()->id,
                 'gelombang_id'     => $request->gelombang_id,
                 'harapan_judul'    => $request->harapan_judul,
                 'alasan_prioritas' => $request->alasan_prioritas,
-                'status_pengajuan' => 'pending',
             ]);
 
             foreach ($request->details as $item) {
@@ -62,6 +62,7 @@ class PengajuanRepositories implements PengajuanInterfaces
                     'judul'          => $item['judul'],
                     'latar_belakang' => $item['latar_belakang'],
                     'topik_id'       => $item['topik_id'],
+                    'status_judul'   => 'pending',
                 ]);
             }
 
@@ -76,27 +77,23 @@ class PengajuanRepositories implements PengajuanInterfaces
     public function getDataById($id)
     {
         $user = Auth::user();
-        $data = $this->pengajuanModel->with(['mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik'])->find($id);
+        $data = $this->pengajuanModel->with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik'])->find($id);
 
         if (!$data) {
             return $this->dataNotFound();
-        }
-        if ($user->role === 'mahasiswa' && $data->mahasiswa_id !== $user->mahasiswa_id) {
-            return $this->error("Anda tidak memiliki akses ke data ini", 403);
         }
 
         return $this->success($data);
     }
 
-    public function updateData($id, PengajuanRequest $request)
+    public function updateData(PengajuanRequest $request, $id)
     {
         DB::beginTransaction();
         try {
             $data = $this->pengajuanModel->find($id);
             if (!$data) return $this->dataNotFound();
 
-            // Mahasiswa hanya bisa update jika status masih pending/fixing
-            if (Auth::user()->role === 'mahasiswa' && !in_array($data->status_pengajuan, ['pending', 'fixing'])) {
+            if (Auth::user()->role === 'mahasiswa' && !in_array($data->status_pengajuan, ['pending'])) {
                 return $this->error("Data sudah diproses dan tidak dapat diubah.", 403);
             }
 
@@ -116,6 +113,7 @@ class PengajuanRepositories implements PengajuanInterfaces
                     'judul'          => $item['judul'],
                     'latar_belakang' => $item['latar_belakang'],
                     'topik_id'       => $item['topik_id'],
+                    'status_judul'   => 'pending',
                 ]);
             }
 
@@ -143,4 +141,6 @@ class PengajuanRepositories implements PengajuanInterfaces
             return $this->error($th->getMessage(), 400, $th, class_basename($this), __FUNCTION__);
         }
     }
+
+    public function updateStatusJudul(Request $request, $id) {}
 }

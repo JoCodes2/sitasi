@@ -12,6 +12,25 @@ class gelombangService {
             });
         });
     }
+    async getActiveGelombang() {
+        try {
+            const response = await $.ajax({
+                url: `${appUrl}/sitasi/gelombang/`,
+                method: 'GET'
+            });
+
+            // Cari data yang is_aktif-nya bernilai 1
+            const activeData = response.data.find(item => item.is_aktif == 1);
+
+            return {
+                success: !!activeData,
+                data: activeData
+            };
+        } catch (error) {
+            console.error('Error fetching gelombang:', error);
+            return { success: false, data: null };
+        }
+    }
 
     async getAllData() {
         let table = $('#gelombangTable').DataTable();

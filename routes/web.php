@@ -43,6 +43,12 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/kepakaran', function () {
         return view('admin.kepakaran');
     });
+    Route::get('/pengajuan', function () {
+        return view('pages.pengajuan');
+    });
+    Route::get('/judul', function () {
+        return view('pages.pengajuan-mahasiswa');
+    });
 
     // route api
     Route::prefix('sitasi')->group(function () {
@@ -90,6 +96,7 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::post('/update/{id}', 'updateData');
             Route::delete('/delete/{id}', 'deleteData');
         });
+        Route::get('/sitasi/pengajuan/check', [PengajuanController::class, 'checkPengajuan']);
     });
     Route::post('sitasi/logout', [LoginController::class, 'logout']);
 });
