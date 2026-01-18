@@ -38,31 +38,8 @@ class PengajuanController extends Controller
         return $this->pengajuanRepo->deleteData($id);
     }
 
-    // Di Controller BE
-    public function checkPengajuan(Request $request)
+    public function updateStatusJudul(Request $request, $id)
     {
-        $gelombangId = $request->gelombang_id;
-        $userId = Auth::id();
-
-        $pengajuan = Pengajuan::where('user_id', $userId)
-            ->where('gelombang_id', $gelombangId)
-            ->with(['details' => function ($query) {
-                $query->orderBy('pilihan_judul');
-            }])
-            ->first();
-
-        if (!$pengajuan) {
-            return response()->json([
-                'code' => 404,
-                'status' => 'not_found',
-                'message' => 'Belum ada pengajuan'
-            ], 404);
-        }
-
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'data' => $pengajuan
-        ]);
+        return $this->pengajuanRepo->updateStatusJudul($request, $id);
     }
 }

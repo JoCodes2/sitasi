@@ -49,7 +49,6 @@ class judulService {
         return await this.ajaxRequest(`${appUrl}/sitasi/pengajuan/get/${id}`, 'GET');
     }
 
-    // Helper untuk extract NIM dari email atau data lain
     extractNimFromEmail(email) {
         // Contoh: jika email mengandung nim, extract angka
         const match = email.match(/\d+/);
@@ -79,6 +78,17 @@ class judulService {
         };
         return semesterMap[semester] || semester;
     }
+    async updateStatusJudul(detailId, status) {
+        const fd = new FormData();
+        fd.append('status', status);
+
+        return await this.ajaxRequest(
+            `${appUrl}/sitasi/pengajuan/detail/${detailId}/status`,
+            'POST',
+            fd
+        );
+    }
+
 }
 
 export default judulService;

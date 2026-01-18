@@ -4,7 +4,7 @@
 <div class="card shadow-sm border-0">
     <x-base-header title="Data Pengajuan Judul Mahasiswa" icon="fa-solid fa-user-graduate"></x-base-header>
 
-    <x-base-body>
+    <x-base-body     data-is-admin="{{ auth()->check() && auth()->user()->role === 'admin' ? '1' : '0' }}">>
         <x-base-table :headers="['No', 'Tanggal', 'Mahasiswa','Gelombang', 'Prioritas', 'Aksi']" id="judulTable">
             <tbody id="judulBody"></tbody>
         </x-base-table>
@@ -119,5 +119,6 @@
 @endsection
 
 @section('scripts')
+
 <script type="module" src="{{ asset('controllers/judul.controller.js') }}"></script>
 @endsection

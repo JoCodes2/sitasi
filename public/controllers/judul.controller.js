@@ -2,8 +2,17 @@ import judulService from "../services/judul.service.js";
 
 $(document).ready(function () {
     const service = new judulService();
-    let currentId = null;
 
+    let currentId = null;
+    let detailMap = {};
+
+    const baseBody = document.querySelector('[data-is-admin]');
+    const isAdmin = baseBody?.dataset.isAdmin === '1';
+
+
+    // =============================
+    // LOAD TABLE DATA
+    // =============================
     const loadData = async () => {
         const data = await service.getAllData();
         const $tbody = $("#judulBody");
@@ -15,14 +24,6 @@ $(document).ready(function () {
 
         let html = "";
         data.forEach((item, index) => {
-            const statusBadge = {
-                'pending': '<span class="badge bg-label-warning">Menunggu</span>',
-                'approved': '<span class="badge bg-label-success">Disetujui</span>',
-                'rejected': '<span class="badge bg-label-danger">Ditolak</span>',
-                'published': '<span class="badge bg-label-primary">Dipublikasi</span>'
-            };
-
-            // Format Tanggal (Indo)
             const tgl = new Date(item.created_at).toLocaleDateString('id-ID', {
                 day: '2-digit',
                 month: 'short',
@@ -31,19 +32,13 @@ $(document).ready(function () {
                 minute: '2-digit'
             });
 
-            // Extract NIM dan Angkatan
-            const nim = service.extractNimFromEmail(item.user.email);
-
-            // Format Gelombang
             const semester = service.formatSemester(item.gelombang.semester);
             const gelombangInfo = `Gelombang ${item.gelombang.gelombang_ke} - ${semester} ${item.gelombang.tahun_ajaran}`;
 
             html += `
                 <tr>
                     <td class="text-center">${index + 1}</td>
-                    <td>
-                        <small>${tgl}</small>
-                    </td>
+                    <td><small>${tgl}</small></td>
                     <td>
                         <div class="d-flex flex-column">
                             <span class="fw-bold">${item.user.nama}</span>
@@ -51,22 +46,15 @@ $(document).ready(function () {
                             <small class="text-muted">${item.user.mahasiswa.angkatan}</small>
                         </div>
                     </td>
-                    <td>
-                        <div class="d-flex flex-column">
-                            <span>${gelombangInfo}</span>
-                        </div>
-                    </td>
+                    <td>${gelombangInfo}</td>
                     <td class="text-center">
                         <span class="fw-bold text-primary">Pilihan ${item.harapan_judul}</span>
                     </td>
                     <td>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-outline-info btn-detail"
-                                    data-id="${item.id}"
-                                    title="Lihat Detail">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                        </div>
+                        <button class="btn btn-sm btn-outline-info btn-detail"
+                                data-id="${item.id}">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </td>
                 </tr>
             `;
@@ -75,8 +63,13 @@ $(document).ready(function () {
         $tbody.html(html);
     };
 
+    // =============================
+    // DETAIL MODAL
+    // =============================
     $(document).on('click', '.btn-detail', async function () {
         currentId = $(this).data('id');
+        detailMap = {};
+
         $('#modalDetailPengajuan').modal('show');
         $('#loaderModal').removeClass('d-none');
         $('#contentModal').addClass('d-none');
@@ -85,61 +78,132 @@ $(document).ready(function () {
             const response = await service.getDataById(currentId);
             const item = response.data;
 
-
-            // Fill Informasi Mahasiswa
+            // ===== MAHASISWA =====
             $('#detNama').text(item.user.nama);
             $('#detNim').text(item.user.mahasiswa.nim);
             $('#detAngkatan').text(item.user.mahasiswa.angkatan);
 
-            // Fill Informasi Gelombang
+            // ===== GELOMBANG =====
             $('#detGelombangKe').text(`Gelombang ${item.gelombang.gelombang_ke}`);
             $('#detSemester').text(service.formatSemester(item.gelombang.semester));
             $('#detTahunAjaran').text(item.gelombang.tahun_ajaran);
 
-            // Fill Judul yang Diharapkan
-            const harapanBadge = {
-                '1': '<button class="btn btn-outline-primary">Pilihan 1</button>',
-                '2': '<button class="btn btn-outline-success">Pilihan 2</button>',
-                '3': '<button class="btn btn-outline-info">Pilihan 3</button>'
-            };
-            $('#detHarapanJudul').html(harapanBadge[item.harapan_judul] || item.harapan_judul);
+            // ===== PRIORITAS =====
+            $('#detHarapanJudul').html(`<span class="badge bg-primary">Pilihan ${item.harapan_judul}</span>`);
             $('#detAlasan').html(item.alasan_prioritas.replace(/\n/g, '<br>'));
 
-            // Fill Detail 3 Judul
-            // Reset status badges
+            // ===== RESET UI =====
             for (let i = 1; i <= 3; i++) {
-                $(`#status-${i}`).removeClass('bg-label-success bg-label-danger')
-                    .addClass('bg-label-secondary')
-                    .text('Belum diproses');
+                $(`#title-${i}`).html('-');
+                $(`#topik-${i}`).text('-');
+                $(`#lb-${i}`).text('-');
             }
 
-            // Jika ada judul yang sudah di-approve
-            if (item.indeks_judul_acc) {
-                $(`#status-${item.indeks_judul_acc}`)
-                    .removeClass('bg-label-secondary')
-                    .addClass('bg-label-success')
-                    .text('Disetujui');
-            }
-
-            item.detail_pengajuan.forEach((detail) => {
+            // ===== DETAIL JUDUL =====
+            item.detail_pengajuan.forEach(detail => {
                 const idx = detail.pilihan_judul;
-                $(`#topik-${idx}`).text(detail.topik.nama_topik);
-                $(`#title-${idx}`).text(detail.judul);
-                $(`#lb-${idx}`).html(detail.latar_belakang.replace(/\n/g, '<br>'));
+                detailMap[idx] = detail.id;
+
+                const topikNama = detail.topik.nama_topik || '-';
+
+                let badgeClass = 'bg-secondary';
+                let badgeText = 'Belum Diproses';
+
+                if (detail.status_judul === 'approved') {
+                    badgeClass = 'bg-success';
+                    badgeText = 'Disetujui';
+                } else if (detail.status_judul === 'rejected') {
+                    badgeClass = 'bg-danger';
+                    badgeText = 'Ditolak';
+                } else if (detail.status_judul === 'confirmation') {
+                    badgeClass = 'bg-info';
+                    badgeText = 'Butuh Konfirmasi';
+                }
+
+                const isLocked = ['approved', 'rejected'].includes(detail.status_judul);
+
+                const actionHtml = (isAdmin && !item.indeks_judul_acc && !isLocked) ? `
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-success btn-acc" data-index="${idx}">ACC</button>
+                        <button class="btn btn-sm btn-danger btn-reject" data-index="${idx}">Tolak</button>
+                        <button class="btn btn-sm btn-info btn-confirm" data-index="${idx}">Konfirmasi</button>
+                    </div>
+                ` : '';
+
+
+                const headerHtml = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge ${badgeClass}">${badgeText}</span>
+                        ${actionHtml}
+                    </div>
+                `;
+
+                $(`#title-${idx}`).html(headerHtml + `<div class="fw-bold">${detail.judul}</div>`);
+                $(`#topik-${idx}`).text(topikNama);
+                $(`#lb-${idx}`).text(detail.latar_belakang);
             });
 
-            // Update button plotting
-            $('.btn-plotting').data('id', item.id);
+            // ===== LOCK JIKA SUDAH ACC =====
+            if (item.indeks_judul_acc) {
+                $('.btn-acc, .btn-reject, .btn-confirm').remove();
+            }
 
             $('#loaderModal').addClass('d-none');
             $('#contentModal').removeClass('d-none');
+
         } catch (error) {
-            console.error('Error loading detail:', error);
+            console.error(error);
             $('#modalDetailPengajuan').modal('hide');
-            errorAlert("Gagal mengambil detail data.");
         }
     });
 
-    // Initial load
+    // =============================
+    // ACTION BUTTON
+    // =============================
+    $(document).on('click', '.btn-acc, .btn-reject, .btn-confirm', function () {
+        if (!isAdmin) return;
+
+        const index = $(this).data('index');
+        const detailId = detailMap[index];
+        if (!detailId) return;
+
+        let status = 'confirmation';
+        let confirmMessage = 'Yakin ingin memproses judul ini?';
+
+        if ($(this).hasClass('btn-acc')) {
+            status = 'approved';
+            confirmMessage = 'Yakin ingin MENYETUJUI judul ini?';
+        }
+
+        if ($(this).hasClass('btn-reject')) {
+            status = 'rejected';
+            confirmMessage = 'Yakin ingin MENOLAK judul ini?';
+        }
+
+        if ($(this).hasClass('btn-confirm')) {
+            status = 'confirmation';
+            confirmMessage = 'Yakin ingin meminta KONFIRMASI judul ini?';
+        }
+
+        confirmAlert(confirmMessage, async () => {
+            try {
+                await service.updateStatusJudul(detailId, status);
+
+                successAlert();
+                $('#modalDetailPengajuan').modal('hide');
+                realoadBrowser();
+
+            } catch (error) {
+                console.error(error);
+                errorAlert('Gagal mengubah status');
+            }
+        });
+    });
+
+
+
+    // =============================
+    // INIT
+    // =============================
     loadData();
 });

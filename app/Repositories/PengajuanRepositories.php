@@ -142,5 +142,45 @@ class PengajuanRepositories implements PengajuanInterfaces
         }
     }
 
-    public function updateStatusJudul(Request $request, $id) {}
+    public function updateStatusJudul(Request $request, $id)
+    {
+
+        DB::beginTransaction();
+        try {
+            $detail = $this->itemPengajuanModel::with('pengajuan')->findOrFail($id);
+            $pengajuan = $detail->pengajuan;
+
+            $detail->update([
+                'status_judul' => $request->status
+            ]);
+
+            if ($request->status === 'approved') {
+                $this->itemPengajuanModel::where('pengajuan_id', $pengajuan->id)
+                    ->where('id', '!=', $detail->id)
+                    ->update([
+                        'status_judul' => 'rejected'
+                    ]);
+
+                $pengajuan->update([
+                    'indeks_judul_acc' => $detail->pilihan_judul,
+                ]);
+            }
+
+            DB::commit();
+
+            return $this->success([
+                'detail_pengajuan' => $detail,
+                'pengajuan' => $pengajuan
+            ], 'Status judul berhasil diperbarui');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $this->error(
+                $th->getMessage(),
+                400,
+                $th,
+                class_basename($this),
+                __FUNCTION__
+            );
+        }
+    }
 }
