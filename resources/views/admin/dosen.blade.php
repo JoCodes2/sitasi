@@ -1,15 +1,18 @@
 @extends('Layouts.Base')
 @section('content')
     <div class="card">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h3 class="m-0 font-weight-bold"><i class="fa-solid fa-book pr-2"></i> Dosen</h3>
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h3 class="m-0 font-weight-bold">
+                <i class="fa-solid fa-user-graduate pr-2"></i> Dosen
+            </h3>
+
+            <button type="button" class="btn btn-primary btn-sm" id="btnTambah">
+                <i class="fa fa-plus"></i> Tambah
+            </button>
         </div>
 
         <div class="card-body py-2">
             <div class="py-3">
-                <button type="button" class="btn btn-primary mb-3" id="btnTambah">
-                    <i class="fa fa-plus"></i> Tambah
-                </button>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -85,7 +88,7 @@
                                 <div class="form-group mb-2">
                                     <label for="jabatan_fungsional">Jabatan Fungsional</label>
                                     <input type="text" class="form-control" name="jabatan_fungsional"
-                                        id="jabatan_fungsional" placeholder="Contoh: Lektor">
+                                        id="jabatan_fungsional" placeholder="kosongkan jika tidak ada">
                                     <div class="invalid-feedback" id="jabatan_fungsional-error"></div>
                                 </div>
 
@@ -93,7 +96,7 @@
                                 <div class="form-group mb-2">
                                     <label for="jabatan_struktural">Jabatan Struktural</label>
                                     <input type="text" class="form-control" name="jabatan_struktural"
-                                        id="jabatan_struktural" placeholder="Opsional">
+                                        id="jabatan_struktural" placeholder="kosongkan jika tidak ada">
                                     <div class="invalid-feedback" id="jabatan_struktural-error"></div>
                                 </div>
 
@@ -152,6 +155,13 @@
     <script>
         $(document).ready(function() {
 
+            function showX(val) {
+                return val && val.trim() !== '' ?
+                    val :
+                    "<span class='text-danger fw-bold'>x</span>";
+            }
+
+
             // Ambil data user
             function getData() {
                 $.ajax({
@@ -167,8 +177,9 @@
                             tableBody += "<td>" + item.nidn + "</td>";
                             tableBody += "<td>" + item.nama_lengkap + "</td>";
                             tableBody += "<td>" + item.gelar + "</td>";
-                            tableBody += "<td>" + item.jabatan_fungsional + "</td>";
-                            tableBody += "<td>" + item.jabatan_struktural + "</td>";
+                            tableBody += "<td>" + showX(item.jabatan_fungsional) + "</td>";
+                            tableBody += "<td>" + showX(item.jabatan_struktural) + "</td>";
+
                             tableBody += "<td>" + item.kuota_max + "</td>";
                             tableBody += "<td>" + item.no_hp + "</td>";
                             tableBody += "<td>" + item.email + "</td>";

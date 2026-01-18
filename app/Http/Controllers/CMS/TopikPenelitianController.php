@@ -30,8 +30,9 @@ class TopikPenelitianController extends Controller
 
     public function updateData(TopikPenelitianRequest $request, $id)
     {
-        return $this->topikPenelitian->updateData($request, $id);
+        return $this->topikPenelitian->updateData($id, $request);
     }
+
     public function deleteData($id)
     {
         return $this->topikPenelitian->deleteData($id);

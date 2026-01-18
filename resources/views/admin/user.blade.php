@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h3 class="m-0 font-weight-bold">
-                <i class="fa-solid fa-award pr-2"></i> Kepakaran
+                <i class="fa-solid fa-award pr-2"></i> Pengguna
             </h3>
 
             <button type="button" class="btn btn-primary btn-sm" id="btnTambah">
@@ -17,9 +17,10 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Dosen</th>
-                            <th>Topik</th>
-                            <th>Persentase</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Sandi</th>
+                            <th>Hak Akses</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -38,41 +39,52 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="DataModalLabel">Kepakaran Dosen</h5>
+                    <h5 class="modal-title" id="DataModalLabel">Data Pengguna</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
-                    <form id="kepakaranForm" method="POST">
+                    <form id="userForm" method="POST">
                         @csrf
                         <input type="hidden" id="id" name="id">
 
-                        <!-- DOSEN -->
+                        {{-- Nama --}}
                         <div class="form-group mb-3">
-                            <label for="dosen_id">Dosen</label>
-                            <select class="form-control" name="dosen_id" id="dosen_id">
-                                <option value="">-- Pilih Dosen --</option>
-                                {{-- looping dosen --}}
-                            </select>
-                            <div class="invalid-feedback" id="dosen_id-error"></div>
+                            <label for="nama">Nama</label>
+                            <input type="text" class="form-control" name="nama" id="nama"
+                                placeholder="Masukkan nama">
+                            <div class="invalid-feedback" id="nama-error"></div>
                         </div>
 
-                        <!-- TOPIK PENELITIAN -->
+                        {{-- Email --}}
                         <div class="form-group mb-3">
-                            <label for="topik_id">Topik Penelitian</label>
-                            <select class="form-control" name="topik_id" id="topik_id">
-                                <option value="">-- Pilih Topik --</option>
-                                {{-- looping topik --}}
-                            </select>
-                            <div class="invalid-feedback" id="topik_id-error"></div>
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email"
+                                placeholder="Masukkan email">
+                            <div class="invalid-feedback" id="email-error"></div>
                         </div>
 
-                        <!-- PERSENTASE -->
+                        {{-- Password --}}
                         <div class="form-group mb-3">
-                            <label for="persentase">Persentase Kepakaran (%)</label>
-                            <input type="number" class="form-control" name="persentase" id="persentase" min="0"
-                                max="100" placeholder="0 - 100">
-                            <div class="invalid-feedback" id="persentase-error"></div>
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" id="password"
+                                placeholder="Masukkan password">
+                            <div class="invalid-feedback" id="password-error"></div>
+                            {{-- <small class="text-muted">
+                                Kosongkan jika tidak ingin mengubah password
+                            </small> --}}
+                        </div>
+
+                        {{-- Role --}}
+                        <div class="form-group mb-3">
+                            <label for="role">Role</label>
+                            <select name="role" id="role" class="form-control">
+                                <option value="">-- Pilih Role --</option>
+                                <option value="super-admin">Super Admin</option>
+                                <option value="admin">Admin</option>
+                                <option value="mahasiswa">Mahasiswa</option>
+                            </select>
+                            <div class="invalid-feedback" id="role-error"></div>
                         </div>
 
                     </form>
@@ -91,49 +103,10 @@
     <script>
         $(document).ready(function() {
 
-            // Fungsi untuk memuat opsi dosen
-            function loadDosen() {
-                $.ajax({
-                    url: "/sitasi/dosen",
-                    method: "GET",
-                    dataType: "json",
-                    success: function(response) {
-                        let options = '<option value="">-- Pilih Dosen --</option>';
-                        $.each(response.data, function(index, item) {
-                            options +=
-                                `<option value="${item.id}">${item.nama_lengkap}</option>`;
-                        });
-                        $("#dosen_id").html(options);
-                    },
-                    error: function() {
-                        console.log("Gagal mengambil data dosen");
-                    }
-                });
-            }
-
-            // Fungsi untuk memuat opsi topik
-            function loadTopik() {
-                return $.ajax({
-                    url: "/sitasi/topik",
-                    method: "GET",
-                    dataType: "json",
-                    success: function(response) {
-                        let options = '<option value="">-- Pilih Topik --</option>';
-                        $.each(response.data, function(index, item) {
-                            options += `<option value="${item.id}">${item.nama_topik}</option>`;
-                        });
-                        $("#topik_id").html(options);
-                    },
-                    error: function() {
-                        console.log("Gagal mengambil data topik");
-                    }
-                });
-            }
-
             // Ambil data user
             function getData() {
                 $.ajax({
-                    url: "/sitasi/kepakaran",
+                    url: "/sitasi/user",
                     method: "GET",
                     dataType: "json",
                     success: function(response) {
@@ -142,9 +115,10 @@
                         $.each(response.data, function(index, item) {
                             tableBody += `<tr>
                                 <td>${index + 1}</td>
-                                <td>${item.dosen.nama_lengkap}</td>
-                                <td>${item.topik.nama_topik}</td>
-                                <td>${item.persentase} %</td>
+                                <td>${item.nama}</td>
+                                <td>${item.email}</td>
+                                <td>****</td>
+                                <td>${item.role}</td>
                                 <td>
                                     <button type="button"
                                         class="btn btn-outline-primary btn-sm edit-btn"
@@ -185,8 +159,8 @@
                 clearErrors();
 
                 let id = $('#id').val();
-                let formData = new FormData($('#kepakaranForm')[0]);
-                let url = id ? `/sitasi/kepakaran/update/${id}` : '/sitasi/kepakaran/create';
+                let formData = new FormData($('#userForm')[0]);
+                let url = id ? `/sitasi/user/update/${id}` : '/sitasi/user/create';
 
                 loadingAllert();
 
@@ -238,23 +212,20 @@
             $(document).on('click', '.edit-btn', function() {
                 let id = $(this).data('id');
                 $.ajax({
-                    url: `/sitasi/kepakaran/get/${id}`,
+                    url: `/sitasi/user/get/${id}`,
                     method: "GET",
                     dataType: "json",
                     success: function(response) {
                         console.log(response);
                         let data = response.data;
                         $('#DataModal').modal('show');
-                        $('#DataModalLabel').text('Edit Kepakaran');
+                        $('#DataModalLabel').text('Edit User');
 
                         $('#id').val(data.id);
-                        $('#persentase').val(data.persentase);
-
-                        // Load options and set selected values
-                        $.when(loadDosen(), loadTopik()).done(function() {
-                            $('#dosen_id').val(data.dosen_id);
-                            $('#topik_id').val(data.topik_id);
-                        });
+                        $('#nama').val(data.nama);
+                        $('#email').val(data.email);
+                        $('#password').val(''); // Kosongkan password untuk edit
+                        $('#role').val(data.role);
                     },
                     error: function(xhr, status, error) {
                         console.error('Error fetching data for edit:', error);
@@ -270,7 +241,7 @@
                 function deleteData() {
                     $.ajax({
                         type: 'DELETE',
-                        url: `/sitasi/kepakaran/delete/${id}`,
+                        url: `/sitasi/user/delete/${id}`,
                         dataType: 'json',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -305,25 +276,22 @@
                 $('.invalid-feedback').text('');
             }
 
-            $(document).on('input change', '#kepakaranForm input, #kepakaranForm textarea', function() {
+            $(document).on('input change', '#userForm input, #userForm textarea', function() {
                 $(this).removeClass('is-invalid');
                 $('#' + this.id + '-error').text('');
             });
 
             // Tampilkan modal tambah
             $(document).on('click', '#btnTambah', function() {
-                $('#kepakaranForm')[0].reset(); // reset form
+                $('#userForm')[0].reset(); // reset form
                 $('#id').val('');
                 clearErrors();
-                $('#DataModalLabel').text('Tambah Kepakaran');
-                loadDosen();
-                loadTopik();
                 $('#DataModal').modal('show');
             });
 
             // Reset saat modal ditutup
             $('#DataModal').on('hidden.bs.modal', function() {
-                $('#kepakaranForm')[0].reset();
+                $('#userForm')[0].reset();
                 $('#id').val('');
                 clearErrors();
             });
