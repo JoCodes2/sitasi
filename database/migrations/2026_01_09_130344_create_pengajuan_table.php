@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pengajuan', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa');
+            $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('gelombang_id')->constrained('gelombang');
 
             $table->enum('harapan_judul', ['1', '2', '3']);
@@ -21,8 +21,6 @@ return new class extends Migration
             $table->integer('indeks_judul_acc')->nullable();
             $table->foreignUuid('dosen_pembimbing_1_id')->nullable()->constrained('dosen');
             $table->foreignUuid('dosen_pembimbing_2_id')->nullable()->constrained('dosen');
-
-            $table->enum('status_pengajuan', ['pending', 'approved', 'fixing', 'published'])->default('pending');
             $table->text('catatan_admin')->nullable();
             $table->dateTime('tgl_plotting')->nullable();
             $table->timestamps();

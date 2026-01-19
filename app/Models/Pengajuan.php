@@ -16,7 +16,7 @@ class Pengajuan extends Model
 
     protected $fillable = [
         'id',
-        'mahasiswa_id',
+        'user_id',
         'gelombang_id',
         'harapan_judul',
         'alasan_prioritas',
@@ -30,9 +30,9 @@ class Pengajuan extends Model
         'updated_at'
     ];
 
-    public function mahasiswa(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function gelombang(): BelongsTo

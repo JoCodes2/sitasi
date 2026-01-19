@@ -10,11 +10,6 @@ use App\Http\Controllers\CMS\TopikPenelitianController;
 use App\Http\Controllers\CMS\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function () {
-    return view('admin.user');
-});
-
-
 // route registrasi and login
 Route::get('/login', function () {
     return view('auth.login');
@@ -47,6 +42,12 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     Route::get('/kepakaran', function () {
         return view('admin.kepakaran');
+    });
+    Route::get('/pengajuan', function () {
+        return view('pages.pengajuan');
+    });
+    Route::get('/judul', function () {
+        return view('pages.pengajuan-mahasiswa');
     });
     Route::get('/topik', function () {
         return view('admin.topik');
@@ -105,6 +106,7 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::get('/get/{id}', 'getDataById');
             Route::post('/update/{id}', 'updateData');
             Route::delete('/delete/{id}', 'deleteData');
+            Route::post('/detail/{id}/status', 'updateStatusJudul');
         });
     });
     Route::post('sitasi/logout', [LoginController::class, 'logout']);

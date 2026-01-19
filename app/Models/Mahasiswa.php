@@ -34,9 +34,4 @@ class Mahasiswa extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-    public function pengajuan(): HasMany
-    {
-        return $this->hasMany(Pengajuan::class, 'mahasiswa_id');
-    }
 }

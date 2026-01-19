@@ -4,8 +4,10 @@ namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PengajuanRequest;
+use App\Models\Pengajuan;
 use App\Repositories\PengajuanRepositories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
 {
@@ -34,5 +36,10 @@ class PengajuanController extends Controller
     public function deleteData($id)
     {
         return $this->pengajuanRepo->deleteData($id);
+    }
+
+    public function updateStatusJudul(Request $request, $id)
+    {
+        return $this->pengajuanRepo->updateStatusJudul($request, $id);
     }
 }
