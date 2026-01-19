@@ -52,6 +52,9 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/topik', function () {
         return view('admin.topik');
     });
+    Route::get('/ploting-dosen', function () {
+        return view('pages.ploting-dosen');
+    });
 
     // route api
     Route::prefix('sitasi')->group(function () {

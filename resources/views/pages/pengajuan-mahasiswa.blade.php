@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card shadow-sm border-0">
-    <x-base-header title="Data Pengajuan Judul Mahasiswa" icon="fa-solid fa-user-graduate"></x-base-header>
+    <x-base-header title="Data Pengajuan Judul Mahasiswa" icon="fa-solid fa-solid fa-book"></x-base-header>
 
     <x-base-body     data-is-admin="{{ auth()->check() && auth()->user()->role === 'admin' ? '1' : '0' }}">>
         <x-base-table :headers="['No', 'Tanggal', 'Mahasiswa','Gelombang', 'Prioritas', 'Aksi']" id="judulTable">
@@ -17,7 +17,7 @@
             <!-- HEADER -->
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i class="fas fa-user-graduate me-2"></i> Detail Pengajuan Judul
+                    <i class="fas fa-solid fa-book me-2"></i> Detail Pengajuan Judul
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>

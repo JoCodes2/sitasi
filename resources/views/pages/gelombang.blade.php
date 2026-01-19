@@ -3,7 +3,7 @@
 @section('content')
 <div class="card">
 
-    <x-base-header title="Gelombang Pengajuan" icon="fa-solid fa-calendar-check">
+    <x-base-header title="Gelombang Pengajuan" icon="fa-solid fa-calendar-days">
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-primary btn-sm" id="btnTambah">
                 <i class="fa fa-plus"></i> Tambah Gelombang
