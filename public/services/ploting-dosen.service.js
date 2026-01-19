@@ -47,102 +47,74 @@ class PlottingService {
     async getJudulApproved() {
         this.initMahasiswaTable();
         const table = $('#mahasiswaTable').DataTable();
-        table.clear();
+        table.clear().draw();
 
         try {
             const res = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan`);
 
-            if (res.code !== 200 || !Array.isArray(res.data)) return;
 
+            const latestGelombang = res.data
+                .map(item => item.gelombang)
+                .filter(g => g !== null)
+                .sort((a, b) => {
+                    if (b.tahun_ajaran !== a.tahun_ajaran) {
+                        return b.tahun_ajaran.localeCompare(a.tahun_ajaran);
+                    }
+                    return b.gelombang_ke - a.gelombang_ke;
+                })[0];
+
+            const filteredData = res.data
+                .filter(item => item.gelombang?.id === latestGelombang.id)
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+
+            let hasApprovedData = false;
             let no = 1;
 
-            res.data.forEach(item => {
-
-                /* =============================
-                 * 1. FILTER GELOMBANG AKTIF
-                 * ============================= */
-                const gel = item.gelombang;
-                if (
-                    !gel ||
-                    !(
-                        gel.is_aktif === 1 ||
-                        gel.status === 'aktif'
-                    )
-                ) return;
-
-                /* =============================
-                 * 2. AMBIL JUDUL APPROVED
-                 * ============================= */
-                const detail =
-                    item.indeks_judul_acc
-                        ? item.detail_pengajuan?.[Number(item.indeks_judul_acc) - 1]
-                        : item.detail_pengajuan?.find(
-                            d => d.status_judul === 'approved'
-                        );
+            filteredData.forEach(item => {
+                let detail = null;
+                if (item.indeks_judul_acc !== null) {
+                    detail = item.detail_pengajuan?.[Number(item.indeks_judul_acc) - 1];
+                } else {
+                    detail = item.detail_pengajuan?.find(d => d.status_judul === 'approved');
+                }
 
                 if (!detail) return;
 
+                hasApprovedData = true;
                 const mhs = item.user?.mahasiswa;
+                const gel = item.gelombang;
 
-                /* =============================
-                 * 3. RENDER KE DATATABLE
-                 * ============================= */
                 table.row.add([
-                    `<div class="text-center fw-bold">${no++}</div>`,
-
-                    /* Informasi Mahasiswa */
-                    `
-                <div>
-                    <div class="fw-bold text-dark">
-                        ${item.user?.nama ?? '-'}
+                    `<div class="text-center">${no++}</div>`,
+                    `<div>
+                    <div class="fw-bold">${item.user?.nama ?? '-'}</div>
+                    <small class="text-muted">${mhs?.nim ?? '-'} | ${mhs?.angkatan ?? '-'}</small>
+                </div>`,
+                    `<div>
+                    <div class="fw-bold text-primary">${detail.judul}</div>
+                    <div class="d-flex gap-1 mt-1">
+                        <small class="badge bg-info">${detail.topik?.nama_topik ?? '-'}</small>
                     </div>
-                    <div class="small text-muted">
-                        NIM : ${mhs?.nim ?? '-'}
-                    </div>
-                    <div class="small text-muted">
-                        Angkatan : ${mhs?.angkatan ?? '-'}
-                    </div>
-                </div>
-                `,
-
-                    /* Informasi Judul */
-                    `
-                <div>
-                    <div class="fw-semibold text-primary">
-                        ${detail.judul}
-                    </div>
-                    <span class="badge bg-info mt-1">
-                        ${detail.topik?.nama_topik ?? 'Tanpa Topik'}
-                    </span>
-                </div>
-                `,
-
-                    /* Informasi Gelombang */
-                    `
-                <div>
-                    <div class="fw-bold">
-                        Gelombang ${gel.gelombang_ke}
-                    </div>
-                    <div class="small text-muted">
-                        ${gel.tahun_ajaran}
-                    </div>
-                    <span class="badge ${gel.semester === 'ganjil'
-                        ? 'bg-primary'
-                        : 'bg-warning'
-                    }">
-                        ${gel.semester}
-                    </span>
-                </div>
-                `
+                </div>`,
+                    `<div>
+                    <span class="badge bg-light-primary text-primary">Gel ${gel.gelombang_ke}</span>
+                    <div class="small">${gel.semester} ${gel.tahun_ajaran}</div>
+                </div>`
                 ]);
             });
 
-            table.draw();
+            if (!hasApprovedData) {
+                this.renderEmptyMahasiswa();
+            } else {
+                table.draw();
+            }
 
         } catch (err) {
             console.error('Gagal mengambil judul:', err);
         }
     }
+
 
 
 
