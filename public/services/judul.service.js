@@ -16,33 +16,30 @@ class judulService {
         });
     }
 
-    async getAllData() {
-        try {
-            const response = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan/`, 'GET');
-            let data = response.data;
-
-            // Sorting manual: Tanggal terbaru ke terlama
-            data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-            return data;
-        } catch (error) {
-            console.error('Error:', error);
-            this.renderEmptyState();
-            return [];
+    initDataTable() {
+        if (!$.fn.dataTable.isDataTable('#judulTable')) {
+            $('#judulTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+                language: {
+                    emptyTable: `
+                        <div class="py-5 text-muted">
+                            <i class="fa-solid fa-folder-open fa-3x mb-3"></i><br>
+                            Belum ada data pengajuan judul.
+                        </div>`
+                }
+            });
         }
     }
 
-    renderEmptyState() {
-        $("#judulBody").html(`
-            <tr>
-                <td colspan="9" class="text-center py-5">
-                    <div class="d-flex flex-column align-items-center">
-                        <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Belum ada judul yang diajukan mahasiswa.</p>
-                    </div>
-                </td>
-            </tr>
-        `);
+    async getAllData() {
+        try {
+            const response = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan/`, 'GET');
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return [];
+        }
     }
 
     async getDataById(id) {

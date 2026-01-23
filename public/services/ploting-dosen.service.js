@@ -60,12 +60,17 @@ class PlottingService {
     async getJudulApproved() {
         this.initMahasiswaTable();
         const table = $('#mahasiswaTable').DataTable();
-        table.clear().draw();
+        table.clear();
 
         try {
             const res = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan`);
 
+            if (!res.data || res.data.length === 0) {
+                table.draw();
+                return;
+            }
 
+            // 1. Cari Gelombang Terbaru (Tahun ajaran tertinggi, lalu Gelombang tertinggi)
             const latestGelombang = res.data
                 .map(item => item.gelombang)
                 .filter(g => g !== null)
@@ -76,52 +81,52 @@ class PlottingService {
                     return b.gelombang_ke - a.gelombang_ke;
                 })[0];
 
-            const filteredData = res.data
-                .filter(item => item.gelombang?.id === latestGelombang.id)
-                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            if (!latestGelombang) {
+                table.draw();
+                return;
+            }
 
-            let hasApprovedData = false;
+            // 2. Filter data mahasiswa yang hanya berada di gelombang terbaru tersebut
+            const filteredData = res.data.filter(item => item.gelombang?.id === latestGelombang.id);
+
             let no = 1;
 
             filteredData.forEach(item => {
-                let detail = null;
-                if (item.indeks_judul_acc !== null) {
-                    detail = item.detail_pengajuan?.[Number(item.indeks_judul_acc) - 1];
-                } else {
-                    detail = item.detail_pengajuan?.find(d => d.status_judul === 'approved');
-                }
+                // 3. CARI JUDUL YANG APPROVED (Logika diperkuat)
+                // Mencari di detail_pengajuan mana yang statusnya 'approved'
+                const detail = item.detail_pengajuan?.find(d => d.status_judul === 'approved');
 
-                if (!detail || detail.status_judul !== 'approved') return;
+                // Jika tidak ada judul yang approved, lewati mahasiswa ini
+                if (!detail) return;
 
-                hasApprovedData = true;
                 const mhs = item.user?.mahasiswa;
                 const gel = item.gelombang;
 
                 table.row.add([
                     `<div class="text-center">${no++}</div>`,
                     `<div>
-                    <div class="fw-bold">${item.user?.nama ?? '-'}</div>
-                    <small class="text-muted">${mhs?.nim ?? '-'} | ${mhs?.angkatan ?? '-'}</small>
+                    <div class="fw-bold text-dark">${item.user?.nama ?? '-'}</div>
+                    <small class="text-muted">${mhs?.nim ?? '-'} | Angkatan ${mhs?.angkatan ?? '-'}</small>
                 </div>`,
                     `<div>
                     <div class="fw-bold text-primary">${detail.judul}</div>
                     <div class="d-flex gap-1 mt-1">
                         <small class="badge bg-info">${detail.topik?.nama_topik ?? '-'}</small>
+                        <small class="badge bg-light-success text-success border border-success">Approved</small>
                     </div>
                 </div>`,
                     `<div>
                     <span class="badge bg-light-primary text-primary">Gel ${gel.gelombang_ke}</span>
-                    <div class="small">${gel.semester} ${gel.tahun_ajaran}</div>
+                    <div class="small text-muted">${gel.semester} ${gel.tahun_ajaran}</div>
                 </div>`
                 ]);
             });
 
-
             table.draw();
-
 
         } catch (err) {
             console.error('Gagal mengambil judul:', err);
+            table.draw();
         }
     }
 
@@ -214,7 +219,11 @@ class PlottingService {
     // Render Tabel Utama (Tabel di bawah halaman)
     async renderHasilPlotting() {
         if (!$.fn.dataTable.isDataTable('#hasilTable')) {
-            $('#hasilTable').DataTable({ pageLength: 10, ordering: false });
+            $('#hasilTable').DataTable({
+                pageLength: 10,
+                ordering: false,
+                destroy: true
+            });
         }
         const table = $('#hasilTable').DataTable();
 
@@ -222,10 +231,16 @@ class PlottingService {
             const res = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan`);
 
             const hasilData = res.data.filter(item => {
+                // 1. Cek apakah sudah ada pembimbing
                 const hasDosen = item.dosen_pembimbing_1_id && item.dosen_pembimbing_2_id;
 
-                const detail = item.detail_pengajuan?.[Number(item.indeks_judul_acc) - 1];
+                // 2. Cari detail yang pilihan_judul-nya sesuai dengan indeks_judul_acc
+                // Ini memastikan meskipun yang di-acc pilihan 2 atau 3, datanya tetap ketemu
+                const detail = item.detail_pengajuan?.find(d =>
+                    Number(d.pilihan_judul) === Number(item.indeks_judul_acc)
+                );
 
+                // 3. Pastikan detail ditemukan dan statusnya approved
                 return hasDosen && detail && detail.status_judul === 'approved';
             });
 
@@ -248,6 +263,7 @@ class PlottingService {
                 });
             } else {
                 $('#hasilPlottingContainer').addClass('d-none');
+                $('#totalMhsTerplot').text(`0 Terplot`);
             }
 
             table.draw();

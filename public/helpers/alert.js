@@ -6,7 +6,7 @@ function realoadBrowser() {
 // alert confirm message
 function confirmAlert1(title, text, callback) {
     Swal.fire({
-        title: `<span style="font-size: 22px">Konfirmasi</span>`,
+        title: `<span style="font-size: 22px">${title}</span>`,
         text: text,
         showCancelButton: true,
         showConfirmButton: true,

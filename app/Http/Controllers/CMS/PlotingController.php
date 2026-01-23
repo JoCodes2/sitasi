@@ -31,4 +31,12 @@ class PlotingController extends Controller
     {
         return $this->plotingRepo->getAllFinalisasi();
     }
+    public function getDataById($id)
+    {
+        return $this->plotingRepo->getDataById($id);
+    }
+    public function updateData(Request $request, $id)
+    {
+        return $this->plotingRepo->updateData($request, $id);
+    }
 }

@@ -3,7 +3,7 @@
 @section('content')
 <div class="card shadow-sm border-0">
 
-    <x-base-header title="Finalisasi Plotting Dosen" icon="fa-solid fa-file-signature">
+    <x-base-header title="Finalisasi Dosen Pembimbing" icon="fa-solid fa-file-signature">
         {{-- Header tanpa tombol tambah karena data berasal dari proses plotting --}}
         <div class="badge bg-primary px-3 py-2">
             <i class="fa-solid fa-check-double me-1"></i> Tahap Finalisasi
@@ -11,26 +11,41 @@
     </x-base-header>
 
     <x-base-body>
-        <div class="alert alert-light border-primary shadow-sm small mb-4">
+       <div class="alert alert-light border-primary shadow-sm small mb-4">
             <div class="d-flex align-items-center">
                 <i class="fa-solid fa-circle-info fa-2x text-primary me-3"></i>
                 <div>
-                    <span class="fw-bold d-block">Konfirmasi Pembimbing & Publikasi</span>
-                    <p class="mb-0 text-muted">
-                        Tinjau kembali hasil plotting otomatis. Anda dapat menyesuaikan dosen pembimbing sebelum menekan tombol <b>Publish</b> untuk merilis jadwal ke mahasiswa.
-                    </p>
+                    @if(auth()->user()->role === 'super-admin' || auth()->user()->role === 'admin')
+                        {{-- Deskripsi untuk Admin/Super Admin --}}
+                        <span class="fw-bold d-block">Konfirmasi Pembimbing & Publikasi</span>
+                        <p class="mb-0 text-muted">
+                            Tinjau kembali hasil plotting otomatis. Anda dapat menyesuaikan dosen pembimbing sebelum menekan tombol <b>Publish</b>.
+                        </p>
+                    @else
+                        {{-- Deskripsi untuk Mahasiswa --}}
+                        <span class="fw-bold d-block">Status Plotting Pembimbing</span>
+                        <p class="mb-0 text-muted">
+                            Berikut adalah hasil penetapan dosen pembimbing Anda. Jika status masih <b>Draft</b>, harap tunggu hingga admin melakukan publikasi resmi.
+                        </p>
+                    @endif
                 </div>
             </div>
         </div>
 
         @php
-            // Header tabel sesuai permintaan
-            $headers = ['No', 'Informasi Mahasiswa', 'Informasi Judul', 'Pembimbing 1', 'Pembimbing 2', 'Aksi'];
+            // Cek apakah user adalah super_admin
+            $isSuperAdmin = auth()->user()->role === 'admin';
+
+            // Susun header secara dinamis
+            $headers = ['No', 'Informasi Mahasiswa', 'Informasi Judul', 'Pembimbing 1', 'Pembimbing 2','Status'];
+
+            if ($isSuperAdmin) {
+                $headers[] = 'Aksi';
+            }
         @endphp
 
         <x-base-table :headers="$headers" id="finalisasiTable">
             <tbody id="finalisasiBody">
-                {{-- Render via JS (gelombang.controller.js atau finalisasi.controller.js) --}}
             </tbody>
         </x-base-table>
     </x-base-body>
@@ -75,5 +90,8 @@
 @endsection
 
 @section('scripts')
-<script type="module" src="{{ asset('controllers/finalisasi-plotting.controller.js') }}"></script>
+<script>
+    window.AUTH_USER_ID = "{{ auth()->id() }}";
+</script>
+<script type="module" src="{{ asset('controllers/finalisasi-dosen.controller.js') }}"></script>
 @endsection

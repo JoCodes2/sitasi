@@ -4,7 +4,7 @@
 <div class="card shadow-sm border-0">
     <x-base-header title="Data Pengajuan Judul Mahasiswa" icon="fa-solid fa-solid fa-book"></x-base-header>
 
-    <x-base-body     data-is-admin="{{ auth()->check() && auth()->user()->role === 'admin' ? '1' : '0' }}">>
+    <x-base-body  data-is-admin="{{ auth()->user()->role === 'super-admin' || auth()->user()->role === 'admin' ? '1' : '0' }}">
         <x-base-table :headers="['No', 'Tanggal', 'Mahasiswa','Gelombang', 'Prioritas', 'Aksi']" id="judulTable">
             <tbody id="judulBody"></tbody>
         </x-base-table>

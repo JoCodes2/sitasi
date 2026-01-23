@@ -121,6 +121,8 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::get('/matriks', 'getMatriksPerhitungan');
             Route::post('/finalisasi', 'finalisasi');
             Route::get('/get-finalisasi', 'getAllFinalisasi');
+            Route::post('/update/{id}', 'updateData');
+            Route::get('/get/{id}', 'getDataById');
         });
     });
     Route::post('sitasi/logout', [LoginController::class, 'logout']);

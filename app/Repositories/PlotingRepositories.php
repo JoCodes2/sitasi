@@ -21,18 +21,13 @@ class PlotingRepositories implements PlotingInterfaces
     public function __construct(PlotingService $plotingService, Pengajuan $pengajuanModel)
     {
         $this->plotingService = $plotingService;
+        $this->pengajuanModel = $pengajuanModel;
     }
     public function getAllFinalisasi()
     {
         $user = Auth::user();
 
-        $query = $this->pengajuanModel->with([
-            'user.mahasiswa',
-            'gelombang',
-            'pembimbing1',
-            'pembimbing2',
-            'detail_pengajuan.topik'
-        ]);
+        $query = $this->pengajuanModel::with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
 
         $query->whereHas('detail_pengajuan', function ($q) {
             $q->whereIn('status_judul', ['finalisasi', 'published']);
@@ -49,6 +44,59 @@ class PlotingRepositories implements PlotingInterfaces
         }
 
         return $this->success($data);
+    }
+    public function getDataById($id)
+    {
+        $data = $this->pengajuanModel->with([
+            'user.mahasiswa',
+            'pembimbing1',
+            'pembimbing2',
+            'detail_pengajuan' => function ($q) {
+                $q->whereIn('status_judul', ['finalisasi', 'published']);
+            }
+        ])->find($id);
+
+        if (!$data) {
+            return $this->dataNotFound();
+        }
+
+        return $this->success($data);
+    }
+
+    public function updateData(Request $request, $id)
+    {
+        return DB::transaction(function () use ($request, $id) {
+            try {
+                $pengajuan = $this->pengajuanModel->find($id);
+
+                if (!$pengajuan) {
+                    return $this->dataNotFound();
+                }
+
+                $pengajuan->update([
+                    'dosen_pembimbing_1_id' => $request->dosen_pembimbing_1_id,
+                    'dosen_pembimbing_2_id' => $request->dosen_pembimbing_2_id,
+                    'tgl_plotting'          => now(),
+                ]);
+
+                $pengajuan->detail_pengajuan()
+                    ->whereIn('status_judul', ['finalisasi', 'published'])
+                    ->update(['status_judul' => 'published']);
+
+                return $this->success(
+                    $pengajuan->load(['pembimbing1', 'pembimbing2']),
+                    "Data pembimbing berhasil diperbarui dan status telah dipublikasikan."
+                );
+            } catch (\Throwable $th) {
+                return $this->error(
+                    $th->getMessage(),
+                    400,
+                    $th,
+                    class_basename($this),
+                    __FUNCTION__
+                );
+            }
+        });
     }
 
     public function plotingDosen()
