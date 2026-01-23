@@ -6,86 +6,143 @@ use Illuminate\Database\Seeder;
 use App\Models\TopikPenelitian;
 use App\Models\Dosen;
 use App\Models\Kepakaran;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class SitasiSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seed Topik Penelitian
+        // 1. SEED TOPIK PENELITIAN
         $topiks = [
-            'Web Development',
-            'Jaringan Komputer',
-            'Data Mining',
-            'Sistem Pendukung Keputusan (SPK)',
-            'GIS (Geographic Information System)',
-            'Sistem Pakar',
-            'Desain Grafis & UI/UX',
-            'Mobile Development'
+            'WEB' => 'WEB',
+            'SPK' => 'SPK',
+            'IOT' => 'IOT',
         ];
 
         $topikIds = [];
-        foreach ($topiks as $item) {
-            // Pastikan ID dikonversi ke string
+        foreach ($topiks as $key => $val) {
             $id = (string) Str::uuid();
-            TopikPenelitian::create([
+            $topikIds[$key] = $id;
+            DB::table('topik_penelitian')->insert([
                 'id' => $id,
-                'nama_topik' => $item
+                'nama_topik' => $val,
+                'created_at' => now(),
             ]);
-            $topikIds[] = $id;
         }
 
-        // 2. Data Dosen
+        // 2. SEED DOSEN
         $dosenData = [
-            ['nama' => 'Dr. Ahmad Fauzi', 'gelar' => 'S.Kom., M.T.'],
-            ['nama' => 'Siti Aminah', 'gelar' => 'S.T., M.Cs.'],
-            ['nama' => 'Budi Santoso', 'gelar' => 'S.Kom., M.Kom.'],
-            ['nama' => 'Ir. Diana Putri', 'gelar' => 'M.TI.'],
-            ['nama' => 'Eko Prasetyo', 'gelar' => 'S.Kom., M.T.'],
-            ['nama' => 'Fadhil Muhammad', 'gelar' => 'M.Kom.'],
-            ['nama' => 'Gita Permata', 'gelar' => 'S.T., M.Kom.'],
-            ['nama' => 'Hendra Wijaya', 'gelar' => 'S.Kom., M.Cs.'],
-            ['nama' => 'Indah Lestari', 'gelar' => 'M.T.'],
-            ['nama' => 'Joko Susilo', 'gelar' => 'S.T., M.TI.'],
+            ['nama' => 'Wildan', 'gelar' => 'M.T.', 'nidn' => '001', 'pakar' => [
+                'WEB' => 50,
+                'SPK' => 40,
+                'IOT' => 80,
+            ]],
+            ['nama' => 'Ali', 'gelar' => 'M.Kom.', 'nidn' => '002', 'pakar' => [
+                'WEB' => 100,
+                'SPK' => 60,
+                'IOT' => 70,
+            ]],
+            ['nama' => 'Sukardi', 'gelar' => 'Dr.', 'nidn' => '003', 'pakar' => [
+                'WEB' => 40,
+                'SPK' => 80,
+                'IOT' => 50,
+            ]],
         ];
 
-        foreach ($dosenData as $index => $data) {
+        foreach ($dosenData as $d) {
             $dosenId = (string) Str::uuid();
-            Dosen::create([
+            DB::table('dosen')->insert([
                 'id' => $dosenId,
-                'nidn' => '092801' . (10 + $index),
-                'nama_lengkap' => $data['nama'],
-                'gelar' => $data['gelar'],
-                'jabatan_fungsional' => 'Lektor',
-                'jabatan_struktural' => ($index == 0) ? 'Ketua Program Studi' : null,
+                'nidn' => $d['nidn'],
+                'nama_lengkap' => $d['nama'],
+                'gelar' => $d['gelar'],
                 'kuota_max' => 5,
-                'no_hp' => '0812345678' . $index,
-                'email' => strtolower(str_replace([' ', '.'], '', $data['nama'])) . '@stmik.ac.id',
-                'alamat' => 'Jl. Pendidikan No. ' . ($index + 1) . ' Kota Palu',
+                'no_hp' => '0812345678',
+                'email' => strtolower($d['nama']) . '@univ.ac.id',
+                'alamat' => 'Kampus',
+                'created_at' => now(),
             ]);
 
-            // 3. Seed Kepakaran (Loop SEMUA topik)
-            // Memperbaiki array_flip dengan memastikan data di dalam array adalah string
-            $keahlianUtama = (array) array_rand(array_flip($topikIds), 2);
-
-            foreach ($topikIds as $tId) {
-                $persentase = 0;
-
-                if (in_array($tId, $keahlianUtama)) {
-                    $persentase = rand(70, 100);
-                } else {
-                    // Pengetahuan dasar (Peluang 30%)
-                    $isSideSkill = rand(1, 10) <= 3;
-                    $persentase = $isSideSkill ? rand(10, 40) : 0;
-                }
-
-                Kepakaran::create([
+            // Seed Kepakaran (Persentase)
+            foreach ($d['pakar'] as $topikKey => $skor) {
+                DB::table('kepakaran')->insert([
                     'id' => (string) Str::uuid(),
                     'dosen_id' => $dosenId,
-                    'topik_id' => $tId,
-                    'persentase' => $persentase,
+                    'topik_id' => $topikIds[$topikKey],
+                    'persentase' => $skor,
                 ]);
             }
+        }
+
+        // 3. SEED GELOMBANG
+        $gelId = (string) Str::uuid();
+        DB::table('gelombang')->insert([
+            'id' => $gelId,
+            'semester' => 'ganjil',
+            'tahun_ajaran' => '2026/2027',
+            'gelombang_ke' => 1,
+            'tgl_mulai' => now(),
+            'tgl_selesai' => now()->addDays(10),
+            'is_aktif' => true,
+        ]);
+
+        // 4. SEED 5 MAHASISWA & PENGAJUAN (SUDAH APPROVE)
+        $mhsData = [
+            ['nama' => 'Mhs IOT', 'nim' => '101', 'topik' => 'IOT'],
+            ['nama' => 'Mhs Web 1', 'nim' => '102', 'topik' => 'WEB'],
+            ['nama' => 'Mhs SPK', 'nim' => '103', 'topik' => 'SPK'],
+            ['nama' => 'Mhs Web 2', 'nim' => '104', 'topik' => 'WEB'],
+            ['nama' => 'Mhs Web 3', 'nim' => '105', 'topik' => 'WEB'],
+        ];
+
+        foreach ($mhsData as $m) {
+            $userId = (string) Str::uuid();
+            DB::table('users')->insert([
+                'id' => $userId,
+                'nama' => $m['nama'],
+                'email' => $m['nim'] . '@student.ac.id',
+                'password' => Hash::make('password'),
+                'role' => 'mahasiswa',
+            ]);
+
+            DB::table('mahasiswa')->insert([
+                'id' => (string) Str::uuid(),
+                'user_id' => $userId,
+                'nim' => $m['nim'],
+                'tempat_lahir' => 'Kota',
+                'tanggal_lahir' => '2000-01-01',
+                'jenis_kelamin' => 'L',
+                'agama' => 'islam',
+                'alamat' => 'Alamat',
+                'no_hp' => '0899',
+                'prodi' => 'TI',
+                'angkatan' => 2022,
+            ]);
+
+            $pengajuanId = (string) Str::uuid();
+            DB::table('pengajuan')->insert([
+                'id' => $pengajuanId,
+                'user_id' => $userId,
+                'gelombang_id' => $gelId,
+                'harapan_judul' => '1',
+                'alasan_prioritas' => 'Testing Hungarian',
+                'indeks_judul_acc' => 1, // Judul pertama yang di-acc
+                'created_at' => now(),
+            ]);
+
+            // Detail Judul dengan status 'approved'
+            DB::table('detail_pengajuan')->insert([
+                'id' => (string) Str::uuid(),
+                'pengajuan_id' => $pengajuanId,
+                'pilihan_judul' => '1',
+                'judul' => 'Judul Penelitian ' . $m['topik'] . ' - ' . $m['nama'],
+                'latar_belakang' => 'Latar belakang...',
+                'topik_id' => $topikIds[$m['topik']],
+                'status_judul' => 'approved',
+                'created_at' => now(),
+            ]);
         }
     }
 }

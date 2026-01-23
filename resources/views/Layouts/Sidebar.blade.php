@@ -97,10 +97,16 @@
                 <div>Daftar Judul</div>
             </a>
         </li>
-        <li class="menu-item {{ request()->is('ploting-dosen*') ? 'active' : '' }}">
+       <li class="menu-item {{ request()->is('ploting-dosen*') ? 'active' : '' }}">
             <a href="/ploting-dosen" class="menu-link">
-                <i class="menu-icon fa-solid fa-users-gear"></i>
-                <div>Dosen Pembimbing</div>
+                <i class="menu-icon fa-solid fa-chart-line"></i>
+                <div>Analisis</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->is('finalisasi-ploting*') ? 'active' : '' }}">
+            <a href="/finalisasi-ploting" class="menu-link">
+                <i class="menu-icon fa-solid fa-file-signature"></i>
+                <div>Keputusan Dosen Pembimbing</div>
             </a>
         </li>
     </ul>

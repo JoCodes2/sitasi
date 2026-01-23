@@ -23,11 +23,20 @@ class PlottingService {
                 searching: false,
                 ordering: false,
                 info: true,
-                responsive: true
+                responsive: true,
+                // Tambahkan konfigurasi ini
+                language: {
+                    emptyTable: `
+                    <div class="py-5 text-muted">
+                        <i class="fa-solid fa-folder-open fa-2x mb-2"></i><br>
+                        Tidak ada judul <b>Approved</b> pada gelombang aktif
+                    </div>
+                `,
+                    zeroRecords: "Data tidak ditemukan"
+                }
             });
         }
     }
-
     initDosenTable() {
         if (!$.fn.dataTable.isDataTable('#dosenTable')) {
             $('#dosenTable').DataTable({
@@ -40,6 +49,10 @@ class PlottingService {
             });
         }
     }
+
+
+
+
 
     /* =====================================================
      *  DATA JUDUL APPROVED (GELOMBANG AKTIF)
@@ -67,7 +80,6 @@ class PlottingService {
                 .filter(item => item.gelombang?.id === latestGelombang.id)
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-
             let hasApprovedData = false;
             let no = 1;
 
@@ -79,7 +91,7 @@ class PlottingService {
                     detail = item.detail_pengajuan?.find(d => d.status_judul === 'approved');
                 }
 
-                if (!detail) return;
+                if (!detail || detail.status_judul !== 'approved') return;
 
                 hasApprovedData = true;
                 const mhs = item.user?.mahasiswa;
@@ -104,11 +116,9 @@ class PlottingService {
                 ]);
             });
 
-            if (!hasApprovedData) {
-                this.renderEmptyMahasiswa();
-            } else {
-                table.draw();
-            }
+
+            table.draw();
+
 
         } catch (err) {
             console.error('Gagal mengambil judul:', err);
@@ -161,22 +171,7 @@ class PlottingService {
         }
     }
 
-    /* =====================================================
-     *  EMPTY STATE
-     * ===================================================== */
-    renderEmptyMahasiswa() {
-        const table = $('#mahasiswaTable').DataTable();
-        table.clear().draw();
 
-        $('#mahasiswaTable tbody').html(`
-            <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
-                    <i class="fa-solid fa-folder-open fa-2x mb-2"></i><br>
-                    Tidak ada judul <b>Approved</b> pada gelombang aktif
-                </td>
-            </tr>
-        `);
-    }
 
     renderEmptyDosen() {
         const table = $('#dosenTable').DataTable();
@@ -190,6 +185,81 @@ class PlottingService {
                 </td>
             </tr>
         `);
+    }
+    constructor() {
+        this.lastMatrixData = null; // Menyimpan cache data matriks
+    }
+
+    // Fungsi pembantu untuk Ajax
+    async ajaxRequest(url, method = 'GET', data = null) {
+        return await $.ajax({
+            url: url,
+            method: method,
+            data: data,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+        });
+    }
+
+    // Trigger Proses Plotting
+    async triggerProsesPlotting() {
+        const response = await this.ajaxRequest(`${appUrl}/sitasi/ploting`, 'GET');
+        if (response.code === 200) {
+            this.lastMatrixData = response.data.matriks;
+        }
+        return response;
+    }
+
+
+
+    // Render Tabel Utama (Tabel di bawah halaman)
+    async renderHasilPlotting() {
+        if (!$.fn.dataTable.isDataTable('#hasilTable')) {
+            $('#hasilTable').DataTable({ pageLength: 10, ordering: false });
+        }
+        const table = $('#hasilTable').DataTable();
+
+        try {
+            const res = await this.ajaxRequest(`${appUrl}/sitasi/pengajuan`);
+
+            const hasilData = res.data.filter(item => {
+                const hasDosen = item.dosen_pembimbing_1_id && item.dosen_pembimbing_2_id;
+
+                const detail = item.detail_pengajuan?.[Number(item.indeks_judul_acc) - 1];
+
+                return hasDosen && detail && detail.status_judul === 'approved';
+            });
+
+            table.clear();
+
+            if (hasilData.length > 0) {
+                $('#hasilPlottingContainer').removeClass('d-none');
+                $('#totalMhsTerplot').text(`${hasilData.length} Terplot`);
+
+                hasilData.forEach((item, index) => {
+                    table.row.add([
+                        `<div class="text-center">${index + 1}</div>`,
+                        `<div>
+                        <div class="fw-bold">${item.user?.nama || '-'}</div>
+                        <small class="text-muted">${item.user?.mahasiswa?.nim || '-'}</small>
+                    </div>`,
+                        `<div class="text-primary fw-bold">${item.pembimbing1?.nama_lengkap || '-'}</div>`,
+                        `<div class="text-success fw-bold">${item.pembimbing2?.nama_lengkap || '-'}</div>`
+                    ]);
+                });
+            } else {
+                $('#hasilPlottingContainer').addClass('d-none');
+            }
+
+            table.draw();
+        } catch (err) {
+            console.error("Gagal render hasil plotting:", err);
+        }
+    }
+    // Tambahkan method ini di dalam class PlottingService Anda
+
+    async triggerFinalisasi() {
+        return await this.ajaxRequest(`${appUrl}/sitasi/ploting/finalisasi`, 'POST', {
+        });
     }
 }
 
