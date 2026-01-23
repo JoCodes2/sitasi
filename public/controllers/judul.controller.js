@@ -8,59 +8,70 @@ $(document).ready(function () {
 
     const baseBody = document.querySelector('[data-is-admin]');
     const isAdmin = baseBody?.dataset.isAdmin === '1';
+    console.log(isAdmin);
+
 
 
     // =============================
     // LOAD TABLE DATA
     // =============================
     const loadData = async () => {
-        const data = await service.getAllData();
-        const $tbody = $("#judulBody");
+        service.initDataTable(); // Pastikan table siap
+        const table = $('#judulTable').DataTable();
+        loadingAllert("Memuat data..."); // Opsional: Beri loading
 
-        if (data.length === 0) {
-            service.renderEmptyState();
-            return;
-        }
+        try {
+            const data = await service.getAllData();
+            table.clear(); // Kosongkan data lama di memori datatable
 
-        let html = "";
-        data.forEach((item, index) => {
-            const tgl = new Date(item.created_at).toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            if (data.length > 0) {
+                // Sorting manual: Tanggal terbaru ke terlama
+                data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-            const semester = service.formatSemester(item.gelombang.semester);
-            const gelombangInfo = `Gelombang ${item.gelombang.gelombang_ke} - ${semester} ${item.gelombang.tahun_ajaran}`;
+                data.forEach((item, index) => {
+                    const tgl = new Date(item.created_at).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
 
-            html += `
-                <tr>
-                    <td class="text-center">${index + 1}</td>
-                    <td><small>${tgl}</small></td>
-                    <td>
-                        <div class="d-flex flex-column">
-                            <span class="fw-bold">${item.user.nama}</span>
-                            <small class="text-muted">${item.user.mahasiswa.nim}</small>
-                            <small class="text-muted">${item.user.mahasiswa.angkatan}</small>
-                        </div>
-                    </td>
-                    <td>${gelombangInfo}</td>
-                    <td class="text-center">
-                        <span class="fw-bold text-primary">Pilihan ${item.harapan_judul}</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-info btn-detail"
-                                data-id="${item.id}">
-                            <i class="fa-solid fa-eye"></i>
+                    const semester = service.formatSemester(item.gelombang.semester);
+                    const gelombangInfo = `
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold">Gelombang ${item.gelombang.gelombang_ke}</span>
+                        <small class="text-muted">${semester} ${item.gelombang.tahun_ajaran}</small>
+                    </div>`;
+
+                    const infoMahasiswa = `
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold text-dark">${item.user.nama}</span>
+                        <small class="text-muted">${item.user.mahasiswa.nim} | Angkatan ${item.user.mahasiswa.angkatan}</small>
+                    </div>`;
+
+                    // Tambahkan baris menggunakan API DataTable
+                    table.row.add([
+                        `<div class="text-center">${index + 1}</div>`,
+                        `<small class="text-muted">${tgl}</small>`,
+                        infoMahasiswa,
+                        gelombangInfo,
+                        `<div class="text-center"><span class="badge bg-info">Pilihan ${item.harapan_judul}</span></div>`,
+                        `<div class="text-center">
+                        <button class="btn btn-sm btn-outline-info btn-detail shadow-sm" data-id="${item.id}">
+                            <i class="fa-solid fa-eye me-1"></i> Detail
                         </button>
-                    </td>
-                </tr>
-            `;
-        });
+                    </div>`
+                    ]);
+                });
+            }
 
-        $tbody.html(html);
+            table.draw(); // Render semua data ke DOM
+            Swal.close(); // Tutup loading
+        } catch (error) {
+            console.error(error);
+            table.draw();
+        }
     };
 
     // =============================
@@ -115,6 +126,9 @@ $(document).ready(function () {
                 } else if (detail.status_judul === 'rejected') {
                     badgeClass = 'bg-danger';
                     badgeText = 'Ditolak';
+                } else if (detail.status_judul === 'pending') {
+                    badgeClass = 'bg-secondary';
+                    badgeText = 'Belum di proses';
                 } else if (detail.status_judul === 'confirmation') {
                     badgeClass = 'bg-info';
                     badgeText = 'Butuh Konfirmasi';
@@ -122,14 +136,15 @@ $(document).ready(function () {
 
                 const isLocked = ['approved', 'rejected'].includes(detail.status_judul);
 
-                const actionHtml = (isAdmin && !item.indeks_judul_acc && !isLocked) ? `
-                    <div class="d-flex gap-1">
-                        <button class="btn btn-sm btn-success btn-acc" data-index="${idx}">ACC</button>
-                        <button class="btn btn-sm btn-danger btn-reject" data-index="${idx}">Tolak</button>
-                        <button class="btn btn-sm btn-info btn-confirm" data-index="${idx}">Konfirmasi</button>
-                    </div>
-                ` : '';
-
+                let actionHtml = '';
+                if (isAdmin && !isLocked) {
+                    actionHtml = `
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-xs btn-success btn-acc" data-index="${idx}">ACC</button>
+                            <button class="btn btn-xs btn-danger btn-reject" data-index="${idx}">Tolak</button>
+                            <button class="btn btn-xs btn-info btn-confirm" data-index="${idx}">Konfirmasi</button>
+                        </div>`;
+                }
 
                 const headerHtml = `
                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -142,11 +157,6 @@ $(document).ready(function () {
                 $(`#topik-${idx}`).text(topikNama);
                 $(`#lb-${idx}`).text(detail.latar_belakang);
             });
-
-            // ===== LOCK JIKA SUDAH ACC =====
-            if (item.indeks_judul_acc) {
-                $('.btn-acc, .btn-reject, .btn-confirm').remove();
-            }
 
             $('#loaderModal').addClass('d-none');
             $('#contentModal').removeClass('d-none');

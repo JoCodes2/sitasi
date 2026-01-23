@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h3 class="m-0 font-weight-bold">
-                <i class="fa-solid fa-user-graduate pr-2"></i> Dosen
+                <i class="fa-solid fa-chalkboard-user pr-2"></i> Dosen
             </h3>
 
             <button type="button" class="btn btn-primary btn-sm" id="btnTambah">

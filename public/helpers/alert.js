@@ -4,10 +4,10 @@ function realoadBrowser() {
 }
 
 // alert confirm message
-function confirmDeleteAlert(message) {
-    return Swal.fire({
-        title: '<span style="font-size: 22px"> Konfirmasi</span>',
-        text: "Apakah anda yakin?",
+function confirmAlert1(title, text, callback) {
+    Swal.fire({
+        title: `<span style="font-size: 22px">${title}</span>`,
+        text: text,
         showCancelButton: true,
         showConfirmButton: true,
         cancelButtonText: 'Tidak',
@@ -17,6 +17,12 @@ function confirmDeleteAlert(message) {
         cancelButtonColor: '#EFEFEF',
         customClass: {
             cancelButton: 'text-dark'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (typeof callback === "function") {
+                callback();
+            }
         }
     });
 }

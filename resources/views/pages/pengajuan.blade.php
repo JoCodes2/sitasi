@@ -3,7 +3,7 @@
 @section('content')
 <div class="card shadow-sm border-0">
     {{-- Header dengan Icon Mahasiswa dan Tombol Aksi di Kanan --}}
-    <x-base-header title="Pengajuan Judul" icon="fa-solid fa-user-graduate">
+    <x-base-header title="Pengajuan Judul" icon="fa-solid fa-solid fa-file-signature">
     </x-base-header>
 
     <x-base-body>

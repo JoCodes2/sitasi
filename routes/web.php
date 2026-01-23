@@ -6,6 +6,7 @@ use App\Http\Controllers\CMS\KepakaranController;
 use App\Http\Controllers\CMS\GelombangController;
 use App\Http\Controllers\CMS\MahasiswaController;
 use App\Http\Controllers\CMS\PengajuanController;
+use App\Http\Controllers\CMS\PlotingController;
 use App\Http\Controllers\CMS\TopikPenelitianController;
 use App\Http\Controllers\CMS\UserController;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,13 @@ Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/topik', function () {
         return view('admin.topik');
     });
+    Route::get('/ploting-dosen', function () {
+        return view('pages.ploting-dosen');
+    });
+    Route::get('/finalisasi-ploting', function () {
+        return view('pages.finalisasi-dosen');
+    });
+
 
     // route api
     Route::prefix('sitasi')->group(function () {
@@ -107,6 +115,14 @@ Route::middleware(['auth', 'web'])->group(function () {
             Route::post('/update/{id}', 'updateData');
             Route::delete('/delete/{id}', 'deleteData');
             Route::post('/detail/{id}/status', 'updateStatusJudul');
+        });
+        Route::prefix('ploting')->controller(PlotingController::class)->group(function () {
+            Route::get('/', 'plotingDosen');
+            Route::get('/matriks', 'getMatriksPerhitungan');
+            Route::post('/finalisasi', 'finalisasi');
+            Route::get('/get-finalisasi', 'getAllFinalisasi');
+            Route::post('/update/{id}', 'updateData');
+            Route::get('/get/{id}', 'getDataById');
         });
     });
     Route::post('sitasi/logout', [LoginController::class, 'logout']);

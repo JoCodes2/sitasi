@@ -28,8 +28,11 @@ class PengajuanRepositories implements PengajuanInterfaces
     public function getAllData()
     {
         $user = Auth::user();
-        $query = $this->pengajuanModel->with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
+        $query = $this->pengajuanModel::with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
 
+        $query->whereHas('detail_pengajuan', function ($q) {
+            $q->whereIn('status_judul', ['pending', 'approved', 'rejected', 'confirmation']);
+        });
 
         if ($user->role == 'mahasiswa') {
             $query->where('user_id', $user->id);

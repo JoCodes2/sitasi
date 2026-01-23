@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('judul');
             $table->text('latar_belakang');
             $table->foreignUuid('topik_id')->constrained('topik_penelitian');
-            $table->enum('status_judul', ['pending', 'approved', 'rejected', 'confirmation'])->default('pending');
+            $table->enum('status_judul', ['pending', 'approved', 'rejected', 'confirmation', 'finalisasi', 'published'])->default('pending');
             $table->timestamps();
         });
     }
