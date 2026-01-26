@@ -12,11 +12,23 @@ $(document).ready(function () {
         try {
             const res = await service.getAllDosen();
             if (res.code === 200) {
-                let options = '<option value="">-- Pilih Dosen --</option>';
+                // Template awal untuk dropdown
+                let initialOption = '<option value="">-- Pilih Dosen --</option>';
+                let optionsPembimbing1 = initialOption;
+                let optionsPembimbing2 = initialOption;
+
                 res.data.forEach(dosen => {
-                    options += `<option value="${dosen.id}">${dosen.nama_lengkap} ${dosen.gelar || ''}</option>`;
+                    const label = `${dosen.nama_lengkap} ${dosen.gelar || ''}`;
+                    const optionHtml = `<option value="${dosen.id}">${label}</option>`;
+
+                    if (dosen.jabatan_fungsional === 'Lektor') {
+                        optionsPembimbing1 += optionHtml;
+                    }
+                    optionsPembimbing2 += optionHtml;
                 });
-                $('#dosen_pembimbing_1_id, #dosen_pembimbing_2_id').html(options);
+
+                $('#dosen_pembimbing_1_id').html(optionsPembimbing1);
+                $('#dosen_pembimbing_2_id').html(optionsPembimbing2);
             }
         } catch (error) {
             console.error("Gagal load data dosen", error);

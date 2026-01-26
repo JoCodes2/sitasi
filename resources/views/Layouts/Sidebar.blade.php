@@ -19,6 +19,8 @@
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
+       {{-- Cek apakah user yang login memiliki role admin atau super-admin --}}
+        @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'super-admin']))
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Menu Utama</span>
         </li>
@@ -79,7 +81,7 @@
                 <div>Gelombang Pengajuan</div>
             </a>
         </li>
-
+        @endif
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Tugas Akhir</span>
         </li>
@@ -97,17 +99,20 @@
                 <div>Daftar Judul</div>
             </a>
         </li>
-       <li class="menu-item {{ request()->is('ploting-dosen*') ? 'active' : '' }}">
-            <a href="/ploting-dosen" class="menu-link">
-                <i class="menu-icon fa-solid fa-chart-line"></i>
-                <div>Analisis</div>
-            </a>
-        </li>
         <li class="menu-item {{ request()->is('finalisasi-ploting*') ? 'active' : '' }}">
             <a href="/finalisasi-ploting" class="menu-link">
                 <i class="menu-icon fa-solid fa-file-signature"></i>
                 <div>Keputusan Dosen Pembimbing</div>
             </a>
         </li>
+        {{-- Cek apakah user yang login memiliki role admin atau super-admin --}}
+        @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'super-admin']))
+       <li class="menu-item {{ request()->is('ploting-dosen*') ? 'active' : '' }}">
+            <a href="/ploting-dosen" class="menu-link">
+                <i class="menu-icon fa-solid fa-chart-line"></i>
+                <div>Analisis</div>
+            </a>
+        </li>
+        @endif
     </ul>
 </aside>
