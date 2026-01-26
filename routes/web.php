@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CMS\DashboardController;
 use App\Http\Controllers\CMS\DosenController;
 use App\Http\Controllers\CMS\KepakaranController;
 use App\Http\Controllers\CMS\GelombangController;
@@ -25,36 +26,37 @@ Route::middleware(['auth', 'web'])->group(function () {
     // route web
     Route::get('/', function () {
         return view('admin.dashboard');
-    });
+    })->middleware('role:admin,super-admin');
 
     Route::get('/user', function () {
         return view('admin.user');
-    });
+    })->middleware('role:admin,super-admin');
 
     Route::get('/gelombang', function () {
         return view('pages.gelombang');
-    });
+    })->middleware('role:admin,super-admin');
     Route::get('/mahasiswa', function () {
         return view('pages.mahasiswa');
-    });
+    })->middleware('role:admin,super-admin');
     Route::get('/dosen', function () {
         return view('admin.dosen');
-    });
+    })->middleware('role:admin,super-admin');
 
     Route::get('/kepakaran', function () {
         return view('admin.kepakaran');
+    })->middleware('role:admin,super-admin');
+    Route::get('/topik', function () {
+        return view('admin.topik');
+    })->middleware('role:admin,super-admin');
+    Route::get('/ploting-dosen', function () {
+        return view('pages.ploting-dosen');
     });
+
     Route::get('/pengajuan', function () {
         return view('pages.pengajuan');
     });
     Route::get('/judul', function () {
         return view('pages.pengajuan-mahasiswa');
-    });
-    Route::get('/topik', function () {
-        return view('admin.topik');
-    });
-    Route::get('/ploting-dosen', function () {
-        return view('pages.ploting-dosen');
     });
     Route::get('/finalisasi-ploting', function () {
         return view('pages.finalisasi-dosen');
@@ -63,6 +65,7 @@ Route::middleware(['auth', 'web'])->group(function () {
 
     // route api
     Route::prefix('sitasi')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'getDashboardData']);
         Route::prefix('user')->controller(UserController::class)->group(function () {
             Route::get('/', 'getAllData');
             Route::post('/create', 'createData');
