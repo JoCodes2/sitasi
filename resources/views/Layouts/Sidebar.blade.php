@@ -86,19 +86,23 @@
             <span class="menu-header-text">Tugas Akhir</span>
         </li>
 
+        @if(auth()->check() && in_array(auth()->user()->role, ['mahasiswa']))
         <li class="menu-item {{ request()->is('pengajuan*') ? 'active' : '' }}">
             <a href="/pengajuan" class="menu-link">
                 <i class="menu-icon fa-solid fa-file-signature"></i>
                 <div>Proses Pengajuan</div>
             </a>
         </li>
-
+        @endif
+        @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'super-admin','mahasiswa']))
         <li class="menu-item {{ request()->is('judul*') ? 'active' : '' }}">
             <a href="/judul" class="menu-link">
                 <i class="menu-icon fa-solid fa-book"></i>
                 <div>Daftar Judul</div>
             </a>
         </li>
+        @endif
+
         <li class="menu-item {{ request()->is('finalisasi-ploting*') ? 'active' : '' }}">
             <a href="/finalisasi-ploting" class="menu-link">
                 <i class="menu-icon fa-solid fa-file-signature"></i>

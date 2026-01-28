@@ -12,25 +12,7 @@ class gelombangService {
             });
         });
     }
-    async getActiveGelombang() {
-        try {
-            const response = await $.ajax({
-                url: `${appUrl}/sitasi/gelombang/`,
-                method: 'GET'
-            });
 
-            // Cari data yang is_aktif-nya bernilai 1
-            const activeData = response.data.find(item => item.is_aktif == 1);
-
-            return {
-                success: !!activeData,
-                data: activeData
-            };
-        } catch (error) {
-            console.error('Error fetching gelombang:', error);
-            return { success: false, data: null };
-        }
-    }
 
     async getAllData() {
         let table = $('#gelombangTable').DataTable();
@@ -58,7 +40,7 @@ class gelombangService {
                         <button class="btn btn-info btn-sm btnEdit" data-id="${item.id}" title="Edit">
                             <i class="fa fa-edit text-white"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm btnHapus" data-id="${item.id}" title="Hapus">
+                        <button class="btn btn-danger btn-sm btnHapus-gelombang" data-id="${item.id}" title="Hapus">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>`;
@@ -188,22 +170,30 @@ class gelombangService {
     }
 
     async deleteData(id) {
-        try {
-            const result = await confirmDeleteAlert();
-            if (result.isConfirmed) {
-                const responseData = await this.ajaxRequest(`${appUrl}/sitasi/gelombang/delete/${id}`, 'DELETE');
-                console.log(responseData);
-                if (responseData.code === 200) {
-                    await successAlert().then(() => {
+        // Memanggil confirmAlert1 dengan parameter: title, text, dan callback
+        confirmAlert1(
+            "Hapus Data",
+            "Apakah Anda yakin ingin menghapus data gelombang ini?",
+            async () => {
+                // Bagian ini adalah callback yang dijalankan jika user menekan "Ya"
+                try {
+                    const responseData = await this.ajaxRequest(`${appUrl}/sitasi/gelombang/delete/${id}`, 'DELETE');
+
+                    if (responseData.code === 200) {
+                        // Jika sukses, tampilkan successAlert lalu reload
+                        await successAlert();
                         realoadBrowser();
-                    });
-                } else {
-                    errorAlert();
+                    } else {
+                        // Jika gagal dari sisi server
+                        errorAlert(responseData.message || "Gagal menghapus data");
+                    }
+                } catch (error) {
+                    // Jika terjadi error pada request (network, dll)
+                    console.error('Error delete:', error);
+                    errorAlert("Terjadi kesalahan sistem");
                 }
             }
-        } catch (error) {
-            errorAlert();
-        }
+        );
     }
 
 }

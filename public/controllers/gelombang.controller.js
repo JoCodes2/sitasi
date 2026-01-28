@@ -77,7 +77,7 @@ $(document).ready(function () {
 
     });
 
-    $(document).on('click', '.btnHapus', function () {
+    $(document).on('click', '.btnHapus-gelombang', function () {
         const id = $(this).data('id');
         gelombang.deleteData(id);
     });

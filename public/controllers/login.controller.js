@@ -36,7 +36,7 @@ $(document).ready(function () {
             messages: {
                 email: {
                     required: "Email tidak boleh kosong",
-                    email: "Format email mahasiswa tidak valid"
+                    email: "Format email  tidak valid"
                 },
                 password: {
                     required: "Password tidak boleh kosong",

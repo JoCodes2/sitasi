@@ -13,4 +13,6 @@ interface PengajuanInterfaces
     public function updateData(PengajuanRequest $request, $id);
     public function deleteData($id);
     public function updateStatusJudul(Request $request, $id);
+
+    public function getAllDataPengajuan();
 }

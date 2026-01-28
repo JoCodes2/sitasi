@@ -90,11 +90,11 @@ class SitasiSeeder extends Seeder
 
         // 4. SEED 5 MAHASISWA & PENGAJUAN (SUDAH APPROVE)
         $mhsData = [
-            ['nama' => 'Mhs IOT', 'nim' => '101', 'topik' => 'IOT'],
-            ['nama' => 'Mhs Web 1', 'nim' => '102', 'topik' => 'WEB'],
-            ['nama' => 'Mhs SPK', 'nim' => '103', 'topik' => 'SPK'],
-            ['nama' => 'Mhs Web 2', 'nim' => '104', 'topik' => 'WEB'],
-            ['nama' => 'Mhs Web 3', 'nim' => '105', 'topik' => 'WEB'],
+            ['nama' => 'Mhs IOT', 'nim' => '101', 'topik' => 'IOT', 'status_judul' => 'pending'],
+            ['nama' => 'Mhs Web 1', 'nim' => '102', 'topik' => 'WEB', 'status_judul' => 'pending'],
+            ['nama' => 'Mhs SPK', 'nim' => '103', 'topik' => 'SPK', 'status_judul' => 'pending'],
+            ['nama' => 'Mhs Web 2', 'nim' => '104', 'topik' => 'WEB', 'status_judul' => 'pending'],
+            ['nama' => 'Mhs Web 3', 'nim' => '105', 'topik' => 'WEB', 'status_judul' => 'pending'],
         ];
 
         foreach ($mhsData as $m) {

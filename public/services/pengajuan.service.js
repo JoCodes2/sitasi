@@ -31,7 +31,7 @@ class AjukanJudul {
         if (!this.userId) return null;
 
         const response = await this.ajaxRequest(
-            `${appUrl}/sitasi/pengajuan/`
+            `${appUrl}/sitasi/pengajuan/submit`
         );
 
         if (!response?.data || !Array.isArray(response.data)) return null;

@@ -113,6 +113,7 @@ Route::middleware(['auth', 'web'])->group(function () {
         });
         Route::prefix('pengajuan')->controller(PengajuanController::class)->group(function () {
             Route::get('/', 'getAllData');
+            Route::get('/submit', 'getAllDataPengajuan');
             Route::post('/create', 'createData');
             Route::get('/get/{id}', 'getDataById');
             Route::post('/update/{id}', 'updateData');

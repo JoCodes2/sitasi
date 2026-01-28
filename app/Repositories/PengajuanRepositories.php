@@ -46,6 +46,23 @@ class PengajuanRepositories implements PengajuanInterfaces
 
         return $this->success($data);
     }
+    public function getAllDataPengajuan()
+    {
+        $user = Auth::user();
+        $query = $this->pengajuanModel::with(['user.mahasiswa', 'gelombang', 'pembimbing1', 'pembimbing2', 'detail_pengajuan.topik']);
+
+        if ($user->role == 'mahasiswa') {
+            $query->where('user_id', $user->id);
+        }
+
+        $data = $query->latest()->get();
+
+        if ($data->isEmpty()) {
+            return $this->dataNotFound();
+        }
+
+        return $this->success($data);
+    }
 
     public function createData(PengajuanRequest $request)
     {

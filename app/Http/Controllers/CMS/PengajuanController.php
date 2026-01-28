@@ -42,4 +42,8 @@ class PengajuanController extends Controller
     {
         return $this->pengajuanRepo->updateStatusJudul($request, $id);
     }
+    public function getAllDataPengajuan()
+    {
+        return $this->pengajuanRepo->getAllDataPengajuan();
+    }
 }
