@@ -31,7 +31,8 @@
 <x-base-modal
     id="modalDetailMahasiswa"
     title="Detail Informasi Mahasiswa"
-    size="modal-lg"
+    size="modal-lg",
+    :hideSaveButton="true"
 >
     {{-- Tab Navigasi --}}
     <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">

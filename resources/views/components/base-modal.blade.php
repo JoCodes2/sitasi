@@ -3,7 +3,8 @@
     'title' => 'Modal Title',
     'size' => 'modal-md',
     'btnId' => 'btnSimpan',
-    'btnText' => 'Simpan'
+    'btnText' => 'Simpan',
+    'hideSaveButton' => false
 ])
 
 <div class="modal fade" id="{{ $id }}" tabindex="-1" aria-labelledby="{{ $id }}Label" aria-hidden="true">
@@ -18,9 +19,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-primary" id="{{ $btnId }}">
-                    <i class="fa-solid fa-save mr-1"></i> {{ $btnText }}
-                </button>
+               @unless($hideSaveButton)
+                    <button type="button" class="btn btn-primary" id="{{ $btnId }}">
+                        <i class="fa-solid fa-save mr-1"></i> {{ $btnText }}
+                    </button>
+                @endunless
             </div>
         </div>
     </div>
