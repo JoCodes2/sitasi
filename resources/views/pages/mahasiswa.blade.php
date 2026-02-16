@@ -32,8 +32,6 @@
     id="modalDetailMahasiswa"
     title="Detail Informasi Mahasiswa"
     size="modal-lg"
-    btnId="btnCetakDetail" {{-- Opsional jika ingin ada tombol cetak --}}
-    btnText="Cetak Data"
 >
     {{-- Tab Navigasi --}}
     <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
