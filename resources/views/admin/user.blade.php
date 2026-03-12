@@ -80,7 +80,6 @@
                             <label for="role">Role</label>
                             <select name="role" id="role" class="form-control">
                                 <option value="">-- Pilih Role --</option>
-                                <option value="super-admin">Super Admin</option>
                                 <option value="admin">Admin</option>
                                 <option value="mahasiswa">Mahasiswa</option>
                             </select>
